@@ -1,0 +1,3423 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwODgyOTMwNjU1MTEwNzE5ODIyMyIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzkxOTdiOWNiZWZlODIwZTBfNTI4ZDAwNTZf2YXYr9ix2ZHYqNmKINin2YTYpdmG2KzZhNmK2LLZii5odG1sLXVuZGVmaW5lZCJ9LCJleHAiOjE3OTQzNjEwMTQsImlhdCI6MTc5NDM1NzQxNCwiYWxnIjoiUlMyNTYifQ.nf0n37pjyAm9HS9MXnGKcX2geEhsdW76tQ8VmIE935LeE5eGoS0e-eOHFd9hmd3M_YvZGprO72wmkhwsILPTmD-YEzg4iXTwq2HpLy80QcD4v8i5KZooVgQIB-KgpI1zHCgunMCBi3LKIbmmVPSb6UQ2M5Jfr8wycA5_jSNYPgUKZoM5218CBatuwE4rTWToBnBUFrDcplHACNjie9_uMpCiT3yGIkgNpLK4G7z5LuMjdEkHWm2m1C2SWHKJo8w7B2QIKvUtvABceJKqFwn3bHwZfYDXFGCMrBGq6GsRjudwfLCeeTf9mqFKm92VVu6N5JjqlMFdS9jIH1Pl6OPYfg","c_9197b9cbefe820e0_528d0056_مدرّبي الإنجليزي.html-undefined")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
+c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
+"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
+Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مدرّبي الإنجليزي — النسخة التفاعلية الشاملة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&amp;family=Newsreader:ital,wght@0,500;0,600;1,500&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f7;--card:#ffffff;--ink:#16202f;--mut:#5d6b7e;
+  --ac:#3b4cca;--acs:#e8ebfc;--ok:#0b7a4b;--oks:#e1f5ea;
+  --bad:#b3261e;--bads:#fde8e6;--warn:#b45309;--warns:#fef3c7;--bd:#d9e0ea;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px)
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1520;--card:#182131;--ink:#e7edf7;--mut:#9fb0c7;
+    --ac:#8c9bff;--acs:#252f52;--ok:#6ee7a8;--oks:#173528;
+    --bad:#ff9a92;--bads:#3b1d1b;--warn:#fbbf24;--warns:#3b2a10;--bd:#2a364a
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1520;--card:#182131;--ink:#e7edf7;--mut:#9fb0c7;
+  --ac:#8c9bff;--acs:#252f52;--ok:#6ee7a8;--oks:#173528;
+  --bad:#ff9a92;--bads:#3b1d1b;--warn:#fbbf24;--warns:#3b2a10;--bd:#2a364a
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.7 Cairo,system-ui,sans-serif;transition:background .2s,color .2s}
+main{max-width:700px;margin:0 auto;padding:14px 16px 64px}
+.top-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h1{font-size:21px;margin:0;font-weight:800}
+h2{font-size:19px;margin:0 0 8px;font-weight:800}
+h3{font-size:16px;margin:10px 0 6px;font-weight:700}
+.top-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pill-select{font:700 14px Cairo,sans-serif;border:1px solid var(--bd);background:var(--card);color:var(--ac);padding:5px 10px;border-radius:10px;cursor:pointer}
+.icon-btn{font:600 14px Cairo,sans-serif;border:1px solid var(--bd);background:var(--card);color:var(--ink);padding:6px 10px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .15s}
+.icon-btn:hover:not(:disabled),button.b:hover:not(:disabled){border-color:var(--ac);transform:translateY(-1px)}
+.icon-btn:disabled{opacity:.4;cursor:not-allowed}
+.gamify-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:8px 14px;margin-bottom:12px;flex-wrap:wrap;box-shadow:0 2px 6px rgba(0,0,0,.02)}
+.g-item{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:700}
+.xp-bar-wrap{flex:1;min-width:110px;max-width:180px;height:8px;background:var(--acs);border-radius:99px;overflow:hidden}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--ac),#10b981);transition:width .35s ease}
+nav{display:flex;gap:5px;margin-bottom:14px;background:var(--card);padding:5px;border-radius:14px;border:1px solid var(--bd);box-shadow:0 2px 6px rgba(0,0,0,.03);overflow-x:auto}
+nav button{flex:1;min-width:fit-content;border:0;background:none;color:var(--mut);font:700 14px Cairo,sans-serif;padding:8px 10px;border-radius:10px;cursor:pointer;transition:all .15s;white-space:nowrap}
+nav button.on{background:var(--ac);color:#fff}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.en{direction:ltr;text-align:left;font-family:Newsreader,Georgia,serif}
+.big{font-size:23px;line-height:1.45;font-weight:600;margin:6px 0 14px}
+.mut{color:var(--mut);font-size:15px}
+button.b{font:600 15px Cairo,sans-serif;border:1px solid var(--bd);background:var(--card);color:var(--ink);padding:9px 15px;border-radius:12px;cursor:pointer;transition:all .15s}
+button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+button.ok-btn{background:var(--ok);color:#fff;border-color:var(--ok)}
+button.b:disabled{opacity:.42;cursor:not-allowed;transform:none}
+button:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;align-items:center}
+.step-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--bd);flex-wrap:wrap}
+.opt{display:block;width:100%;text-align:left;direction:ltr;font:500 19px Newsreader,Georgia,serif;margin:8px 0;padding:12px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--ink);cursor:pointer;transition:all .15s}
+.opt:hover:not(:disabled){border-color:var(--ac);background:var(--acs)}
+.opt.rtl-opt{direction:rtl;text-align:right;font:600 16px Cairo,sans-serif}
+.opt.ok{background:var(--oks);border-color:var(--ok);color:var(--ok);font-weight:600}
+.opt.bad{background:var(--bads);border-color:var(--bad);color:var(--bad)}
+textarea,input[type=text],input[type=password]{width:100%;direction:ltr;text-align:left;font:500 19px Newsreader,Georgia,serif;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--ink)}
+textarea{min-height:120px;resize:vertical}
+.bar{height:8px;border-radius:8px;background:var(--acs);overflow:hidden;margin:6px 0 14px}
+.bar i{display:block;height:100%;background:var(--ac);transition:width .25s ease}
+.fb{padding:11px 14px;border-radius:12px;margin:10px 0;font-size:16px}
+.fb.ok{background:var(--oks);color:var(--ok)}
+.fb.bad{background:var(--bads);color:var(--bad)}
+.fb.warn{background:var(--warns);color:var(--warn)}
+.lvl{font:800 50px/1.1 Cairo,sans-serif;color:var(--ac);margin:4px 0}
+.stat{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd);gap:8px;flex-wrap:wrap}
+.stat:last-child{border-bottom:0}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;background:var(--acs);color:var(--ac)}
+.badge.ok{background:var(--oks);color:var(--ok)}
+.badge.warn{background:var(--warns);color:var(--warn)}
+.diff-word{display:inline-block;margin:0 2px;padding:1px 5px;border-radius:6px}
+.diff-ok{background:var(--oks);color:var(--ok)}
+.diff-miss{background:var(--bads);color:var(--bad);text-decoration:underline wavy}
+.chat-scroll{max-height:400px;overflow-y:auto;padding:4px 2px;scroll-behavior:smooth}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chip{font:600 13px Cairo,sans-serif;padding:5px 11px;border-radius:99px;border:1px solid var(--bd);background:var(--bg);color:var(--mut);cursor:pointer;transition:all .15s}
+.chip:hover,.chip.active{border-color:var(--ac);color:var(--ac);background:var(--acs)}
+/* استوديو مكالمة الفيديو مع الذكاء الاصطناعي */
+.video-stage{position:relative;background:linear-gradient(145deg,#111827,#1e293b);border-radius:18px;padding:20px 16px;color:#f8fafc;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;border:1px solid #334155}
+.avatar-wrap{position:relative;width:156px;height:156px;display:flex;align-items:center;justify-content:center;margin:8px auto}
+.pulse-ring{position:absolute;inset:-8px;border-radius:50%;border:3px solid #6366f1;opacity:0;transform:scale(.95);transition:all .25s}
+.video-stage.speaking .pulse-ring{opacity:.75;animation:pulseRing 1.3s infinite ease-out}
+.video-stage.listening .pulse-ring{opacity:.85;border-color:#10b981;animation:pulseRing 1.1s infinite ease-out}
+@keyframes pulseRing{0%{transform:scale(.95);opacity:.8}100%{transform:scale(1.22);opacity:0}}
+.pip-cam{position:absolute;top:14px;left:14px;width:108px;height:82px;border-radius:12px;background:#0f172a;border:2px solid #475569;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:12px;color:#94a3b8;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.pip-cam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.call-status{font-size:13px;font-weight:700;padding:4px 12px;border-radius:99px;background:rgba(255,255,255,.1);backdrop-filter:blur(4px);margin-bottom:6px}
+.subtitles-box{width:100%;background:rgba(15,23,42,.82);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 14px;margin-top:10px;text-align:center}
+.call-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.call-btn{border:0;border-radius:99px;padding:10px 18px;font:700 14px Cairo,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:transform .15s}
+.call-btn:hover{transform:scale(1.04)}
+.call-btn.mic{background:#10b981;color:#fff}
+.call-btn.mic.listening{background:#ef4444;animation:pulseMic 1s infinite alternate}
+@keyframes pulseMic{from{box-shadow:0 0 0 0 rgba(239,68,68,.6)}to{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+.call-btn.cam{background:#334155;color:#f8fafc}
+.call-btn.end{background:#ef4444;color:#fff}
+/* لعبة ترتيب الجمل وتحدي الكلمات */
+.word-bank{display:flex;gap:8px;flex-wrap:wrap;padding:12px;background:var(--bg);border-radius:12px;min-height:58px;border:1px dashed var(--bd);margin:8px 0}
+.word-tile{font:600 18px Newsreader,Georgia,serif;padding:7px 14px;border-radius:10px;background:var(--card);border:1px solid var(--ac);color:var(--ink);cursor:pointer;user-select:none;transition:all .15s}
+.word-tile:hover{background:var(--ac);color:#fff}
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;margin-top:10px}
+.badge-card{border:1px solid var(--bd);border-radius:12px;padding:10px;text-align:center;background:var(--bg);opacity:.45;transition:all .2s}
+.badge-card.unlocked{opacity:1;border-color:var(--ok);background:var(--oks)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--bd);border-radius:18px;max-width:540px;width:100%;padding:20px;max-height:90vh;overflow-y:auto}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:8px 16px;border-radius:99px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:200}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<main>
+  <!-- الشريط العلوي مع زر العودة واختيار المستوى والمشاركة -->
+  <header class="top-bar">
+    <div class="brand">
+      <button type="button" class="icon-btn" id="globalBackBtn" onclick="goBackStep()" title="العودة للخطوة أو الشاشة السابقة" disabled="">↩️ رجوع</button>
+      <h1>مدرّبي الإنجليزي</h1>
+      <span id="engineBadge" class="badge ok" title="حالة الحفظ والمحرّك الذكي">💾 محفوظ تلقائياً ✓</span>
+    </div>
+    <div class="top-actions">
+      <label for="lvlSelect" class="mut" style="font-size:13px">المستوى:</label>
+      <select id="lvlSelect" class="pill-select" onchange="changeLevel(this.value)" title="تحديد المستوى يغيّر صعوبة المحادثة والتدريب والاختبار فوراً">
+        <option value="A2">A2 مبتدئ</option>
+        <option value="B1">B1 متوسط</option>
+        <option value="B2">B2 متقدم</option>
+        <option value="C1">C1 طلاقة</option>
+      </select>
+      <button type="button" class="icon-btn" onclick="openShareModal()" title="مشاركة الأداة أو تحميلها لإرسالها لأصدقائك">🔗 مشاركة</button>
+      <button type="button" class="icon-btn" onclick="toggleSound()" id="soundBtn" title="تشغيل/كتم المؤثرات الصوتية التشجيعية">🔔</button>
+      <button type="button" class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="تبديل الوضع الليلي/النهاري">🌓</button>
+      <button type="button" class="icon-btn" onclick="openSettings()" title="إعدادات الذكاء الاصطناعي والصوت">⚙️</button>
+    </div>
+  </header>
+
+  <!-- شريط الشغف والتحفيز (XP + الحماس اليومي + اللقب) -->
+  <section class="gamify-strip" aria-label="شريط التقدم والحماس">
+    <div class="g-item" title="أيام التدريب المتتالية">🔥 حماس: <span id="streakVal">1</span> يوم</div>
+    <div class="g-item" title="نقاط الخبرة المكتسبة">⚡ <span id="xpVal">5</span> XP</div>
+    <div class="xp-bar-wrap" title="التقدم نحو اللقب التالي"><div id="xpFill" class="xp-bar-fill" style="width: 8%;"></div></div>
+    <div class="g-item"><span id="rankBadge" class="badge">🌱 متعلّم طموح</span></div>
+  </section>
+
+  <nav id="nav"><button type="button" class="on" onclick="tabTo(0)">💬 محادثة</button><button type="button" class="" onclick="tabTo(1)">📹 فيديو AI</button><button type="button" class="" onclick="tabTo(2)">🎯 تدريب</button><button type="button" class="" onclick="tabTo(3)">📋 الاختبار</button><button type="button" class="" onclick="tabTo(4)">📈 تقدّمي</button></nav>
+  <div id="app"><div class="card" style="padding:13px 16px;background:var(--acs)"><div class="stat" style="border:0;padding:0"><span>💡 <b>مصطلح اليوم لمستوى A2:</b> <span class="en" style="font-weight:700">Piece of cake</span> — سهل جداً (زي شربة المية)</span><button type="button" class="icon-btn" onclick="say('Piece of cake. The English test was a piece of cake!',.88)">🔊 اسمعه</button></div><div class="en mut" style="margin-top:4px;font-size:15px">Example: "The English test was a piece of cake!"</div></div><div class="card"><div class="stat" style="border:0;padding:0 0 6px"><h2>محادثة مع المدرّب (A2)</h2><button type="button" class="icon-btn" style="background:var(--ac);color:#fff;border-color:var(--ac)" onclick="go('video')">📹 ابدأ مكالمة فيديو AI</button></div><p class="mut" style="margin:2px 0 8px">اختر سيناريو المحادثة أو اضغط على أي جملة مقترحة لمستوى <b>A2</b>:</p><div class="chips"><button type="button" class="chip active" onclick="setScenario('free')">🗣️ محادثة حرة</button><button type="button" class="chip " onclick="setScenario('interview')">💼 مقابلة عمل</button><button type="button" class="chip " onclick="setScenario('media')">📰 نقاش إعلامي</button><button type="button" class="chip " onclick="setScenario('cafe')">☕ في كافيه/مطعم</button></div><div class="chips"><button type="button" class="chip" onclick="useStarter(0)">✨ I wake up at 7 AM and drink coffee e…</button><button type="button" class="chip" onclick="useStarter(1)">✨ I like watching movies with my famil…</button><button type="button" class="chip" onclick="useStarter(2)">✨ Can we practice ordering food at a r…</button><button type="button" class="chip" onclick="useStarter(3)">✨ What is the difference between in an…</button></div><div id="log" class="chat-scroll"><div class="card" style="margin:8px 0;padding:14px 16px"><div class="en big" style="font-size:20px;margin:0 0 8px">Hi! What did you do today? Tell me about it in English.</div><div class="row" style="margin:4px 0"><button type="button" class="b" style="padding:5px 12px;font-size:14px" onclick="say(CH[0].t,.9)">🔊</button><button type="button" class="b" style="padding:5px 12px;font-size:14px" onclick="say(CH[0].t,.68)">🐢 ببطء</button></div></div></div><textarea id="msg" style="min-height:74px;margin-top:8px" placeholder="Write in English… (اضغط Enter للإرسال)" onkeydown="if(event.key==='Enter'&amp;&amp;!event.shiftKey){event.preventDefault();sendC()}" oninput="scheduleSave()"></textarea><div class="row"><button type="button" class="b p" onclick="sendC()">إرسال</button><button type="button" class="b" onclick="micC()">🎤 اتكلم</button><button type="button" class="b" onclick="resetChat()">محادثة جديدة</button></div></div></div>
+</main>
+
+<!-- نافذة الإعدادات -->
+<div id="settingsModal" class="modal-backdrop" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <div class="stat" style="border:0;padding-top:0">
+      <h2>⚙️ إعدادات المدرّب والنسخ الاحتياطي</h2>
+      <button type="button" class="icon-btn" onclick="closeSettings()">✕</button>
+    </div>
+    <p class="mut">الأداة تعمل تلقائياً <b>بالمحرّك الذكي المدمج</b> بدون إنترنت، وتحفظ تقدّمك في كل خطوة. يمكنك أيضاً ربط مفتاح Gemini أو OpenAI API اختيارياً:</p>
+    <div style="margin:10px 0">
+      <label class="mut" for="apiProvider">مزوّد الذكاء الاصطناعي:</label>
+      <select id="apiProvider" class="pill-select" style="width:100%;margin-top:4px;padding:10px">
+        <option value="local">المدرّب الذكي المدمج (مجاني ويعمل دائماً بدون مفتاح)</option>
+        <option value="gemini">Google Gemini API (gemini-2.5-flash)</option>
+        <option value="openai">OpenAI API (gpt-4o-mini)</option>
+      </select>
+    </div>
+    <div style="margin:10px 0">
+      <label class="mut" for="apiKeyInput">مفتاح API (اختياري — يُحفظ على جهازك فقط):</label>
+      <input type="password" id="apiKeyInput" placeholder="AIzaSy... أو sk-..." autocomplete="off">
+    </div>
+    <div class="row" style="justify-content:space-between;margin-top:16px">
+      <button type="button" class="b p" onclick="saveSettings()">حفظ الإعدادات</button>
+      <button type="button" class="b" onclick="closeSettings()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة مشاركة الأداة وتحميلها -->
+<div id="shareModal" class="modal-backdrop open" onclick="if(event.target===this)closeShareModal()">
+  <div class="modal">
+    <div class="stat" style="border:0;padding-top:0">
+      <h2>🔗 مشاركة الأداة مع غيرك</h2>
+      <button type="button" class="icon-btn" onclick="closeShareModal()">✕</button>
+    </div>
+    <p class="mut">عشان يستفيد غيرك من الأداة بسهولة على الموبايل أو الكمبيوتر، اختر الطريقة الأنسب لك:</p>
+    <div class="card" style="background:var(--bg);margin-bottom:10px">
+      <h3>1️⃣ تحميل الأداة كملف مستقل (يعمل على أي موبايل أو كمبيوتر)</h3>
+      <p class="mut" style="margin:4px 0 10px">حمّل ملف الأداة الكامل (HTML) وابعته لأي شخص على واتساب أو تيليجرام، أو ارفعه مجاناً في ثوانٍ على موقع <b>Netlify Drop</b> أو <b>GitHub Pages</b> ليصبح رابطاً عاماً دائماً:</p>
+      <div class="row">
+        <button type="button" class="b p" onclick="downloadStandaloneApp()">⬇️ تحميل نسخة الأداة الكاملة (.html)</button>
+      </div>
+    </div>
+    <div class="card" style="background:var(--bg);margin-bottom:10px">
+      <h3>2️⃣ مشاركة دعوة وبطاقة إنجازك</h3>
+      <textarea id="shareTextOut" readonly="" style="min-height:80px;font-size:14px;direction:rtl;text-align:right"></textarea>
+      <div class="row">
+        <button type="button" class="b p" onclick="shareNativeOrCopy()">📲 مشاركة / نسخ الدعوة</button>
+      </div>
+    </div>
+    <div class="card" style="background:var(--bg);margin-bottom:0">
+      <h3>3️⃣ نقل تقدّمك لجهاز آخر (كود الحفظ)</h3>
+      <p class="mut" style="margin:4px 0 8px">انسخ كود تقدّمك لو حابب تكمل من متصفح أو موبايل تاني بدون ضياع أي خطوة:</p>
+      <div class="row">
+        <button type="button" class="b" onclick="exportProgressCode()">📤 نسخ كود تقدّمي</button>
+        <button type="button" class="b" onclick="importProgressCode()">📥 استرجاع تقدّمي من كود</button>
+      </div>
+      <div id="importBoxWrap" style="display:none;margin-top:8px">
+        <input type="text" id="importCodeInput" placeholder="الصق كود التقدم هنا…">
+        <div class="row"><button type="button" class="b p" onclick="applyImportedCode()">تأكيد الاسترجاع</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- عناصر مخفية للحفاظ على التوافق الكامل مع كافة المعرّفات القياسية -->
+<div style="display:none" aria-hidden="true">
+  <div id="fb"></div>
+  <input type="text" id="tx">
+  <span id="wc">0</span>
+  <textarea id="sum"></textarea>
+  <p id="cpm"></p>
+  <div id="log"></div>
+  <textarea id="msg"></textarea>
+  <p id="fbs"></p>
+  <div id="fbx"></div>
+  <button type="button" id="chkLisBtn">تحقق</button>
+  <button type="button" id="micTestBtn">🎤 اتكلم</button>
+  <button type="button" onclick="clearProgress()">🗑️ مسح السجل والبدء من جديد</button>
+</div>
+
+<div id="toast" class="toast">تم تفعيل المستوى A2 في المحادثة والتدريب والاختبار ✓</div>
+
+<script>
+/* =========================================================================
+   1. التخزين الفائق متعدد الطبقات (localStorage + pageVault + Auto-Restore)
+   يضمن عدم ضياع أي خطوة عند الخروج والعودة
+   ========================================================================= */
+var $ = function(s){ return document.querySelector(s); };
+var app = $('#app');
+
+var store = {
+  get: function(k, d){
+    try {
+      var v = localStorage.getItem('engcoach_' + k);
+      if(v !== null) return JSON.parse(v);
+      var legacy = localStorage.getItem(k);
+      return legacy !== null ? JSON.parse(legacy) : d;
+    } catch(e){ return d; }
+  },
+  set: function(k, v){
+    try {
+      localStorage.setItem('engcoach_' + k, JSON.stringify(v));
+      localStorage.setItem(k, JSON.stringify(v));
+    } catch(e){}
+  },
+  del: function(k){
+    try {
+      localStorage.removeItem('engcoach_' + k);
+      localStorage.removeItem(k);
+    } catch(e){}
+  }
+};
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function showToast(msg){
+  var t = $('#toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+/* =========================================================================
+   2. المؤثرات الصوتية التفاعلية (Web Audio API Chimes) لكسر الملل
+   ========================================================================= */
+var soundEnabled = store.get('sound', true);
+
+function playTone(type){
+  if(!soundEnabled) return;
+  try {
+    var Ctx = window.AudioContext || window.webkitAudioContext;
+    if(!Ctx) return;
+    if(!playTone.ctx) playTone.ctx = new Ctx();
+    var ctx = playTone.ctx;
+    if(ctx.state === 'suspended') ctx.resume();
+    var now = ctx.currentTime;
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    if(type === 'ok'){
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.setValueAtTime(659.25, now + 0.09);
+      osc.frequency.setValueAtTime(783.99, now + 0.18);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.36);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    } else if(type === 'lvl'){
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.setValueAtTime(554.37, now + 0.1);
+      osc.frequency.setValueAtTime(659.25, now + 0.2);
+      osc.frequency.setValueAtTime(880, now + 0.3);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+      osc.start(now);
+      osc.stop(now + 0.55);
+    } else {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.setValueAtTime(240, now + 0.12);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+      osc.start(now);
+      osc.stop(now + 0.28);
+    }
+  } catch(e){}
+}
+
+function toggleSound(){
+  soundEnabled = !soundEnabled;
+  store.set('sound', soundEnabled);
+  var btn = $('#soundBtn');
+  if(btn) btn.textContent = soundEnabled ? '🔔' : '🔕';
+  showToast(soundEnabled ? 'تم تفعيل المؤثرات الصوتية 🔔' : 'تم كتم المؤثرات الصوتية 🔕');
+}
+
+/* =========================================================================
+   3. نظام نقاط الخبرة (XP) والحماس اليومي (Streak) والأوسمة
+   ========================================================================= */
+var BADGES_DEF = [
+  { id: 'first_step', icon: '🌟', title: 'البداية القوية', desc: 'أكملت أول تمرين أو محادثة' },
+  { id: 'test_done', icon: '🎓', title: 'مكتشف المستوى', desc: 'أنهيت اختبار المستوى الشامل' },
+  { id: 'streak_3', icon: '🔥', title: 'شعلة النشاط', desc: 'وصلت إلى 100 نقطة خبرة XP' },
+  { id: 'video_star', icon: '📹', title: 'نجم الكاميرا', desc: 'أجريت مكالمة فيديو تفاعلية مع المدرّب' },
+  { id: 'word_master', icon: '🎮', title: 'بطل التحدي', desc: 'فزت في لعبة ترتيب الجمل السريعة' },
+  { id: 'c1_hero', icon: '👑', title: 'نخبة الطلاقة', desc: 'تدربت في المستوى المتقدم B2 أو C1' }
+];
+
+function updateGamificationUI(){
+  var xp = store.get('xp', 0);
+  var streakData = store.get('streak', { count: 1, lastDay: new Date().toDateString() });
+  var today = new Date().toDateString();
+  if(streakData.lastDay !== today){
+    var yesterday = new Date(Date.now() - 86400000).toDateString();
+    streakData.count = (streakData.lastDay === yesterday) ? streakData.count + 1 : 1;
+    streakData.lastDay = today;
+    store.set('streak', streakData);
+  }
+  if($('#streakVal')) $('#streakVal').textContent = streakData.count;
+  if($('#xpVal')) $('#xpVal').textContent = xp;
+  var pct = Math.min(100, (xp % 100));
+  if($('#xpFill')) $('#xpFill').style.width = Math.max(8, pct) + '%';
+
+  var rank = xp >= 500 ? '👑 خبير طلاقة'
+           : xp >= 250 ? '🚀 متحدث متمكّن'
+           : xp >= 100 ? '⚡ محاور نشيط'
+           : '🌱 متعلّم طموح';
+  if($('#rankBadge')) $('#rankBadge').textContent = rank;
+}
+
+function awardXP(amount, badgeId){
+  var xp = store.get('xp', 0) + (amount || 10);
+  store.set('xp', xp);
+  var unlocked = store.get('badges', {});
+  unlocked.first_step = true;
+  if(xp >= 100) unlocked.streak_3 = true;
+  if(lvl() === 'B2' || lvl() === 'C1') unlocked.c1_hero = true;
+  if(badgeId && !unlocked[badgeId]){
+    unlocked[badgeId] = true;
+    playTone('lvl');
+    var bObj = BADGES_DEF.find(function(b){ return b.id === badgeId; });
+    if(bObj) showToast('🏆 وسام جديد: ' + bObj.title + ' (+' + amount + ' XP)');
+  } else {
+    playTone('ok');
+  }
+  store.set('badges', unlocked);
+  updateGamificationUI();
+}
+
+/* =========================================================================
+   4. معالجة اللغة الطبيعية وحساب التطابق الصوتي والنصي الدقيق
+   ========================================================================= */
+var CONTRACTIONS = {
+  "im":"i am", "ive":"i have", "id":"i would", "ill":"i will",
+  "youre":"you are", "youve":"you have", "youd":"you would", "youll":"you will",
+  "hes":"he is", "shes":"she is", "its":"it is", "weve":"we have",
+  "were":"we are", "wed":"we would", "well":"we will",
+  "theyre":"they are", "theyve":"they have", "theyd":"they would", "theyll":"they will",
+  "dont":"do not", "doesnt":"does not", "didnt":"did not",
+  "cant":"cannot", "couldnt":"could not", "wouldnt":"would not", "shouldnt":"should not",
+  "wont":"will not", "isnt":"is not", "arent":"are not", "wasnt":"was not", "werent":"were not",
+  "hasnt":"has not", "havent":"have not", "hadnt":"had not", "lets":"let us", "thats":"that is",
+  "whats":"what is", "wheres":"where is", "theres":"there is"
+};
+
+var NUM_WORDS = {
+  "0":"zero","1":"one","2":"two","3":"three","4":"four","5":"five",
+  "6":"six","7":"seven","8":"eight","9":"nine","10":"ten",
+  "11":"eleven","12":"twelve","13":"thirteen","14":"fourteen","15":"fifteen",
+  "20":"twenty","30":"thirty","40":"forty","50":"fifty","100":"hundred"
+};
+
+function norm(s){
+  var clean = String(s || '').toLowerCase()
+    .replace(/[’‘`']/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+  if(!clean) return [];
+  var raw = clean.split(/\s+/), out = [];
+  raw.forEach(function(w){
+    if(CONTRACTIONS[w]){
+      CONTRACTIONS[w].split(' ').forEach(function(p){ out.push(p); });
+    } else if(NUM_WORDS[w]){
+      out.push(NUM_WORDS[w]);
+    } else {
+      out.push(w);
+    }
+  });
+  return out;
+}
+
+function wordSim(w1, w2){
+  if(w1 === w2) return 1;
+  var l1 = w1.length, l2 = w2.length;
+  if(!l1 || !l2 || Math.abs(l1 - l2) > 2) return 0;
+  var dp = [];
+  for(var i=0; i<=l1; i++) dp[i] = [i];
+  for(var j=0; j<=l2; j++) dp[0][j] = j;
+  for(i=1; i<=l1; i++){
+    for(j=1; j<=l2; j++){
+      var cost = w1[i-1] === w2[j-1] ? 0 : 1;
+      dp[i][j] = Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
+    }
+  }
+  var dist = dp[l1][l2], maxL = Math.max(l1, l2);
+  return maxL >= 4 && dist === 1 ? 0.85 : (maxL >= 6 && dist === 2 ? 0.7 : 0);
+}
+
+function sim(said, target){
+  var a = norm(said), b = norm(target);
+  if(!b.length || !a.length) return 0;
+  var m = a.length, n = b.length, dp = [];
+  for(var i=0; i<=m; i++){
+    dp[i] = [];
+    for(var j=0; j<=n; j++) dp[i][j] = 0;
+  }
+  for(i=1; i<=m; i++){
+    for(j=1; j<=n; j++){
+      var ws = wordSim(a[i-1], b[j-1]);
+      dp[i][j] = ws > 0 ? Math.max(dp[i-1][j], dp[i][j-1], dp[i-1][j-1] + ws) : Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  var orderedScore = dp[m][n] / n;
+  var extraPenalty = m > n + 2 ? Math.max(0.6, n / m) : 1;
+  return Math.min(100, Math.round(100 * orderedScore * extraPenalty));
+}
+
+function diffTargetHTML(said, target){
+  var a = norm(said);
+  var rawWords = String(target || '').trim().split(/\s+/);
+  var pool = a.slice();
+  return rawWords.map(function(rw){
+    var nw = norm(rw);
+    var matched = nw.every(function(sub){
+      for(var i=0; i<pool.length; i++){
+        if(wordSim(pool[i], sub) >= 0.7){
+          pool.splice(i, 1);
+          return true;
+        }
+      }
+      return false;
+    });
+    return '<span class="diff-word ' + (matched ? 'diff-ok' : 'diff-miss') + '">' + esc(rw) + '</span>';
+  }).join(' ');
+}
+
+/* =========================================================================
+   5. النطق الصوتي والتعرّف على الكلام مع دعم مكالمة الفيديو
+   ========================================================================= */
+var LEVEL_SPEED = { A2: 0.84, B1: 0.90, B2: 0.96, C1: 1.0 };
+
+function say(t, r, onStartCb, onEndCb){
+  try {
+    if(!window.speechSynthesis){
+      if(onEndCb) onEndCb();
+      return;
+    }
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(String(t || ''));
+    u.lang = (VC && VC.persona === 'liam') ? 'en-GB' : 'en-US';
+    u.rate = r || LEVEL_SPEED[lvl()] || 0.9;
+    var voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+    var targetLang = u.lang;
+    var pref = voices.find(function(v){ return v.lang.indexOf(targetLang.slice(0,2)) === 0 && /natural|google|samantha|daniel|microsoft/i.test(v.name); })
+            || voices.find(function(v){ return /^en/i.test(v.lang); });
+    if(pref) u.voice = pref;
+    u.onstart = function(){ if(onStartCb) onStartCb(); };
+    u.onend = function(){ if(onEndCb) onEndCb(); };
+    u.onerror = function(){ if(onEndCb) onEndCb(); };
+    speechSynthesis.speak(u);
+  } catch(e){
+    if(onEndCb) onEndCb();
+  }
+}
+
+function listen(ok, fail){
+  var R = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!R){ fail(); return; }
+  try {
+    var r = new R();
+    r.lang = 'en-US';
+    r.interimResults = false;
+    r.maxAlternatives = 1;
+    var done = false;
+    r.onresult = function(e){
+      done = true;
+      var tr = e.results && e.results[0] && e.results[0][0] ? e.results[0][0].transcript : '';
+      ok(tr);
+    };
+    r.onerror = function(){ if(!done){ done = true; fail(); } };
+    r.onnomatch = function(){ if(!done){ done = true; fail(); } };
+    r.start();
+  } catch(e){ fail(); }
+}
+
+/* =========================================================================
+   6. بنوك الأسئلة والتدريبات والمحادثة المخصّصة لكل مستوى (A2 / B1 / B2 / C1)
+   ========================================================================= */
+/* أسئلة الاختبار العام لتحديد المستوى */
+var MCQ_GENERAL = [
+  ["There ___ two cars outside.", ["is","are","be","am"], 1, "الجمع (two cars) بياخد are مع There."],
+  ["I have lived here ___ 2020.", ["for","since","from","during"], 1, "بنستخدم since قبل نقطة زمنية محددة (2020)، و for قبل المدة."],
+  ["If it rains tomorrow, we ___ at home.", ["stay","will stay","would stay","stayed"], 1, "الحالة الشرطية الأولى: مضارع بسيط + will + المصدر."],
+  ["She asked me where ___.", ["I lived","did I live","do I live","I do live"], 0, "في السؤال غير المباشر بنرتب الجملة كجملة خبرية (فاعل ثم فعل)."],
+  ["I need to ___ a decision soon.", ["do","make","take","give"], 1, "المتلازمة اللفظية الصحيحة هي make a decision."],
+  ["The report ___ by the team last week.", ["was finished","finished","has finished","is finishing"], 0, "مبني للمجهول في الماضي البسيط لوجود last week."],
+  ["If I ___ more time, I would learn Spanish.", ["have","had","would have","will have"], 1, "الحالة الشرطية الثانية (تخيّل عكس الواقع): If + Past Simple (had) + would."],
+  ["He denied ___ the money.", ["to take","taking","take","took"], 1, "الفعل deny بيجي بعده الفعل مضاف له ing (Gerund)."],
+  ["Prices have ___ sharply this year.", ["raised","risen","arisen","rose"], 1, "الفعل اللازم rise تصريفه الثالث risen (يرتفع بدون مفعول)."],
+  ["By next year, I ___ here for a decade.", ["will work","will have worked","have worked","work"], 1, "المستقبل التام (will have + P.P) لحدث سيكتمل قبل وقت محدد في المستقبل."],
+  ["Not only ___ late, but he also forgot the files.", ["he was","was he","he is","is he"], 1, "عند البدء بـ Not only نعمل إقلاب (Inversion) فيتقدم الفعل المساعد على الفاعل."],
+  ["The CEO’s remarks were deliberately ___, leaving room for interpretation.", ["ambiguous","ambitious","ambient","amiable"], 0, "كلمة ambiguous تعني غامض أو يحتمل أكثر من تفسير."]
+];
+
+/* أسئلة اختبارات المستويات المخصّصة (عند اختيار اختبار حسب المستوى) */
+var MCQ_BY_LEVEL = {
+  A2: [
+    ["There ___ two cars outside.", ["is","are","be","am"], 1, "الجمع بياخد are."],
+    ["She ___ coffee every morning.", ["drink","drinks","drinking","drank"], 1, "مع المفرد الغائب she في المضارع البسيط بنضيف s للفعل."],
+    ["Where ___ you go yesterday?", ["do","did","were","are"], 1, "في السؤال عن الماضي البسيط (yesterday) بنستخدم الفعل المساعد did."],
+    ["My office is ___ the second floor.", ["in","on","at","to"], 1, "مع الطوابق (floors) بنستخدم حرف الجر on."],
+    ["This bag is ___ than that one.", ["cheaper","more cheap","cheapest","cheap"], 0, "الصفة القصيرة cheap عند المقارنة بنضيف لها er."],
+    ["We ___ watching a movie right now.", ["is","are","do","have"], 1, "المضارع المستمر مع we بياخد are + verb-ing."]
+  ],
+  B1: [
+    ["I have lived here ___ 2020.", ["for","since","from","during"], 1, "since بتيجي قبل بداية المدة الزمنية المحددة."],
+    ["If it rains tomorrow, we ___ at home.", ["stay","will stay","would stay","stayed"], 1, "الحالة الشرطية الأولى: If + مضارع بسيط، والجزء التاني will + المصدر."],
+    ["She asked me where ___.", ["I lived","did I live","do I live","I do live"], 0, "السؤال غير المباشر بيترتب فاعل ثم فعل."],
+    ["I need to ___ a decision soon.", ["do","make","take","give"], 1, "بنقول make a decision مش do."],
+    ["The report ___ by the team last week.", ["was finished","finished","has finished","is finishing"], 0, "مبني للمجهول في الماضي: was/were + التصريف الثالث."],
+    ["While I ___ dinner, the phone rang.", ["cooked","was cooking","have cooked","cook"], 1, "حدث كان مستمراً في الماضي (was cooking) وقطعه حدث آخر (rang)."]
+  ],
+  B2: [
+    ["If I ___ more time, I would learn Spanish.", ["have","had","would have","will have"], 1, "الحالة الشرطية الثانية: If + had + would."],
+    ["He denied ___ the money.", ["to take","taking","take","took"], 1, "الفعل deny يتبعه Gerund (verb+ing)."],
+    ["Prices have ___ sharply this year.", ["raised","risen","arisen","rose"], 1, "rise / rose / risen بمعنى يرتفع من تلقاء نفسه."],
+    ["By next year, I ___ here for a decade.", ["will work","will have worked","have worked","work"], 1, "مستقبل تام مع By next year."],
+    ["She is used to ___ under tight deadlines.", ["work","working","worked","works"], 1, "التعبير be used to بمعنى (معتاد على) بيجي بعده verb+ing."],
+    ["___ the heavy traffic, we arrived on time.", ["Although","Despite","However","Because"], 1, "Despite بيجي بعدها اسم أو شبه جملة اسمية (the heavy traffic)."]
+  ],
+  C1: [
+    ["Not only ___ late, but he also forgot the files.", ["he was","was he","he is","is he"], 1, "إقلاب بلاغي (Inversion) بعد Not only في بداية الجملة."],
+    ["The CEO’s remarks were deliberately ___, leaving room for interpretation.", ["ambiguous","ambitious","ambient","amiable"], 0, "ambiguous تعني حمّال أوجه أو غامض عمداً."],
+    ["The editor insisted that every claim ___ verified before publication.", ["is","be","was","were"], 1, "صيغة الشرط الالتزامي (Subjunctive) بعد insisted that تاخد الفعل في المصدر المجرد be."],
+    ["Hardly had the broadcast started ___ the power went out.", ["than","when","then","that"], 1, "التركيب القياسي هو Hardly had ... when."],
+    ["Were the regulations stricter, companies ___ their policies.", ["will reconsider","would reconsider","reconsidered","reconsider"], 1, "حذف If وتقديم Were كبديل للحالة الشرطية الثانية."],
+    ["The new policy has ___ a heated debate among journalists.", ["sparked","done","taken","arrived"], 0, "المتلازمة اللفظية الدقيقة هي spark a debate (يثير نقاشاً ساخناً)."]
+  ]
+};
+
+var LIS_BY_LVL = {
+  ALL: ["The meeting has been moved to Thursday afternoon.", "I would have called you if I had known."],
+  A2: ["My brother works in a big office near the station.", "We are going to visit our family on Friday."],
+  B1: ["The meeting has been moved to Thursday afternoon.", "If I finish my work early, I will call you tonight."],
+  B2: ["I would have called you if I had known about the delay.", "She is used to working under constant pressure."],
+  C1: ["The editor insisted that every claim be verified before publication.", "Hardly had the broadcast started when the power went out."]
+};
+
+var SPK_BY_LVL = {
+  ALL: ["I’ve been working in social media for seven years.", "Could you tell me how to get to the station?"],
+  A2: ["Could you tell me how to get to the station?", "I usually wake up at seven and drink coffee."],
+  B1: ["I’ve been working in social media for seven years.", "He told me that the meeting had been cancelled."],
+  B2: ["Despite the criticism, the team stood by its decision.", "Had I known about the traffic, I would have left earlier."],
+  C1: ["Their strategy hinges on engaging audiences rather than merely informing them.", "It is hard to overstate how quickly public opinion can shift."]
+};
+
+var BANK = {
+  A2: [
+    "I get up at seven and drink coffee.",
+    "My brother works in a big office.",
+    "We are going to the market tomorrow.",
+    "Can you help me with this phone?",
+    "She doesn’t like cold weather.",
+    "I usually watch movies on Friday night.",
+    "Where did you buy this nice jacket?",
+    "They live in a quiet street near the metro."
+  ],
+  B1: [
+    "I’ve been working in this field for about seven years.",
+    "If I finish early, I’ll call you tonight.",
+    "He told me that the meeting had been cancelled.",
+    "I’m trying to improve my English every day.",
+    "The news broke while we were having dinner.",
+    "Could you send me the details by email before noon?",
+    "She decided to apply for a new position abroad.",
+    "Working from home saves a lot of commuting time."
+  ],
+  B2: [
+    "Had I known about the delay, I would have left earlier.",
+    "The audience reacted strongly to the announcement.",
+    "She’s used to working under constant pressure.",
+    "We need to figure out how to reach more people online.",
+    "Despite the criticism, the team stood by its decision.",
+    "Not only did sales increase, but customer satisfaction also improved.",
+    "The documentary shed light on how algorithms shape our habits.",
+    "It takes consistent effort to build trust with your audience."
+  ],
+  C1: [
+    "The editor insisted that every claim be verified before publication.",
+    "Hardly had the broadcast started when the power went out.",
+    "It’s hard to overstate how quickly public opinion can shift.",
+    "Their strategy hinges on engaging audiences rather than merely informing them.",
+    "Whatever the outcome, the process revealed some uncomfortable truths.",
+    "Seldom do we witness such a rapid transformation in media consumption.",
+    "Were the regulations stricter, companies would reconsider their data policies."
+  ]
+};
+
+var WP = {
+  A2: "Write 3 sentences about your family or your daily routine.",
+  B1: "Write 4–5 sentences about your typical work day and main tasks.",
+  B2: "Write a short paragraph: what is the biggest change in news media in the last five years?",
+  C1: "Write a paragraph arguing whether social media algorithms have improved or harmed public debate."
+};
+
+var IDIOMS_BY_LVL = {
+  A2: { phrase: "Piece of cake", ar: "سهل جداً (زي شربة المية)", ex: "The English test was a piece of cake!" },
+  B1: { phrase: "Keep me in the loop", ar: "خلّيني في الصورة / بلّغني بالتطورات", ex: "Please keep me in the loop about the project." },
+  B2: { phrase: "Read between the lines", ar: "يفهم المعنى الخفي وراء الكلام", ex: "Good journalists know how to read between the lines." },
+  C1: { phrase: "A double-edged sword", ar: "سلاح ذو حدين", ex: "Artificial intelligence in media is a double-edged sword." }
+};
+
+var CHAT_STARTERS_BY_LVL = {
+  A2: [
+    "I wake up at 7 AM and drink coffee every day.",
+    "I like watching movies with my family on Friday.",
+    "Can we practice ordering food at a restaurant?",
+    "What is the difference between in and on?"
+  ],
+  B1: [
+    "Today I worked on an interesting project at work.",
+    "I want to improve my English speaking skills for my career.",
+    "Could we roleplay a job interview in English?",
+    "I have been working in media for several years."
+  ],
+  B2: [
+    "In my opinion, social media has changed how we consume news.",
+    "Working under tight deadlines teaches you how to prioritize.",
+    "Let's discuss how remote work affects team productivity.",
+    "Had I started learning English earlier, it would have been easier."
+  ],
+  C1: [
+    "Algorithms often prioritize engagement over accuracy in modern journalism.",
+    "Not only does technology accelerate communication, but it also reshapes culture.",
+    "Let's debate whether AI will transform creative industries.",
+    "How can I make my professional writing sound more idiomatic?"
+  ]
+};
+
+/* =========================================================================
+   7. المحرّك الذكي المدمج لتصحيح القواعد والمحادثة حسب المستوى
+   ========================================================================= */
+var GRAMMAR_RULES = [
+  {
+    re: /\b(i)\b/g,
+    fix: function(){ return "I"; },
+    why: "ضمير المتكلم (I) لازم دايماً يتكتب بحرف كبير Capital في أي مكان في الجملة.",
+    topic: "Capitalization (I)"
+  },
+  {
+    re: /\b(he|she|it)\s+(have)\b/gi,
+    fix: function(m, p1){ return p1 + " has"; },
+    why: "مع المفرد الغائب (he / she / it) بنستخدم has مش have.",
+    topic: "Subject-Verb Agreement"
+  },
+  {
+    re: /\b(he|she|it)\s+(dont|don't|don’t)\b/gi,
+    fix: function(m, p1){ return p1 + " doesn't"; },
+    why: "في النفي مع (he / she / it) بنستخدم doesn't مش don't.",
+    topic: "Present Simple Negation"
+  },
+  {
+    re: /\b(he|she|it)\s+(work|like|live|go|want|need|play|watch|study|eat|drink|speak|know)\b/gi,
+    fix: function(m, p1, v){
+      var vl = v.toLowerCase();
+      var sForm = vl === 'go' || vl === 'watch' ? v + 'es' : (vl === 'study' ? v.slice(0,-1)+'ies' : v + 's');
+      return p1 + " " + sForm;
+    },
+    why: "في المضارع البسيط بنضيف s/es للفعل مع (he / she / it).",
+    topic: "Present Simple Third Person (-s)"
+  },
+  {
+    re: /\b(i|we|they|you)\s+(is|was)\b/gi,
+    fix: function(m, p1, v){
+      var pLow = p1.toLowerCase(), vLow = v.toLowerCase();
+      if(pLow === 'i') return p1 + (vLow === 'is' ? ' am' : ' was');
+      return p1 + (vLow === 'is' ? ' are' : ' were');
+    },
+    why: "تأكد من توافق فعل الكينونة (am / is / are / was / were) مع الفاعل.",
+    topic: "Verb To Be Agreement"
+  },
+  {
+    re: /\b(i am|i'm|i’m)\s+(agree|understand|mean|think so|believe)\b/gi,
+    fix: function(m, p1, v){ return "I " + v; },
+    why: "الأفعال الخبرية زي agree و understand أفعال كاملة مش صفات، فبنقول I agree مباشرة من غير am.",
+    topic: "Stative Verbs (No 'am')"
+  },
+  {
+    re: /\b(did|didn't|didnt|didn’t)\s+(went|saw|took|made|had|came|bought|wrote|ate|drank|spoke|worked|finished|started|liked|played|watched)\b/gi,
+    fix: function(m, aux, v){
+      var map = {went:'go',saw:'see',took:'take',made:'make',had:'have',came:'come',bought:'buy',wrote:'write',ate:'eat',drank:'drink',spoke:'speak',worked:'work',finished:'finish',started:'start',liked:'like',played:'play',watched:'watch'};
+      return aux + " " + (map[v.toLowerCase()] || v);
+    },
+    why: "بعد did أو didn't لازم الفعل يرجع للمصدر (Infinitive) بدون تصريف ماضي.",
+    topic: "Past Simple Auxiliaries (did + base verb)"
+  },
+  {
+    re: /\bsince\s+(\d+|two|three|four|five|six|seven|eight|nine|ten|many|several|a few)\s+(years?|months?|days?|hours?|weeks?)\b/gi,
+    fix: function(m, num, unit){ return "for " + num + " " + unit; },
+    why: "مع المدة الزمنية المحسوبة (مثل 5 years أو three days) بنستخدم for، أما since فبتيجي مع بداية المدة (مثل since 2020).",
+    topic: "For vs. Since"
+  },
+  {
+    re: /\b(do|did|does)\s+a\s+(decision|mistake|choice|plan|effort|progress|call|promise)\b/gi,
+    fix: function(m, v, n){
+      var vl = v.toLowerCase();
+      var rep = vl === 'did' ? 'made' : (vl === 'does' ? 'makes' : 'make');
+      return rep + (n.toLowerCase()==='progress' ? ' ' : (n.toLowerCase()==='effort' ? ' an ' : ' a ')) + n;
+    },
+    why: "مع كلمات زي decision / mistake / choice بنستخدم الفعل make مش do.",
+    topic: "Collocations (Make vs. Do)"
+  },
+  {
+    re: /\b(informations|advices|equipments|homeworks|knowledges|furnitures)\b/gi,
+    fix: function(m){ return m.replace(/s$/i, ''); },
+    why: "دي أسماء لا تُعد (Uncountable Nouns) في الإنجليزي، فمبتتجمعش بـ s.",
+    topic: "Uncountable Nouns"
+  },
+  {
+    re: /\b(in)\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/gi,
+    fix: function(m, prep, day){ return "on " + day.charAt(0).toUpperCase() + day.slice(1); },
+    why: "مع أيام الأسبوع بنستخدم حرف الجر on مش in.",
+    topic: "Prepositions of Time (on + day)"
+  },
+  {
+    re: /\b(married|engaged)\s+with\b/gi,
+    fix: function(m, adj){ return adj + " to"; },
+    why: "بنقول married to / engaged to مش with.",
+    topic: "Dependent Prepositions"
+  },
+  {
+    re: /\b(depends|depend)\s+from\b/gi,
+    fix: function(m, v){ return v + " on"; },
+    why: "الفعل depend بياخد حرف الجر on (depend on).",
+    topic: "Dependent Prepositions"
+  },
+  {
+    re: /\b(good)\s+in\s+([a-z]+ing|english|math|sports|work|writing|speaking)\b/gi,
+    fix: function(m, g, obj){ return g + " at " + obj; },
+    why: "لما نتكلم عن المهارة في شيء بنقول good at مش good in.",
+    topic: "Prepositions (good at)"
+  },
+  {
+    re: /\b(go|went|going)\s+to\s+home\b/gi,
+    fix: function(m, v){ return v + " home"; },
+    why: "كلمة home بعد أفعال الحركة (go / come / return) مبتاخدش حرف الجر to.",
+    topic: "Prepositions (go home)"
+  },
+  {
+    re: /\b(discuss)\s+about\b/gi,
+    fix: function(m, v){ return v; },
+    why: "الفعل discuss متعدّي بنفسه، فبنقول discuss the topic من غير about.",
+    topic: "Transitive Verbs (No preposition)"
+  },
+  {
+    re: /\b(more)\s+(better|worse|easier|harder|faster|bigger|smaller|higher)\b/gi,
+    fix: function(m, more, comp){ return "much " + comp; },
+    why: "الصفات دي فيها مقارنة أصلاً (er)، فمبنحطش قبلها more.",
+    topic: "Double Comparatives"
+  },
+  {
+    re: /\b(look|looking)\s+forward\s+to\s+(meet|see|hear|work|visit|start|join|learn)\b/gi,
+    fix: function(m, lk, v){ return lk + " forward to " + v + "ing"; },
+    why: "التعبير look forward to بيجي بعده الفعل مضاف له ing (Gerund).",
+    topic: "Gerund after 'look forward to'"
+  },
+  {
+    re: /\b(alot)\b/gi,
+    fix: function(){ return "a lot"; },
+    why: "كلمة a lot بتتكتب كلمتين منفصلتين مش كلمة واحدة.",
+    topic: "Spelling (a lot)"
+  },
+  {
+    re: /\b(becuase|beacuse)\b/gi,
+    fix: function(){ return "because"; },
+    why: "تصحيح إملائي لكلمة because.",
+    topic: "Spelling"
+  },
+  {
+    re: /\b(recieve)\b/gi,
+    fix: function(){ return "receive"; },
+    why: "بعد حرف الـ c بنكتب ei مش ie في كلمة receive.",
+    topic: "Spelling (ei after c)"
+  },
+  {
+    re: /\b(definately|definitly)\b/gi,
+    fix: function(){ return "definitely"; },
+    why: "تصحيح إملائي لكلمة definitely.",
+    topic: "Spelling"
+  }
+];
+
+function runLocalGrammarCheck(text){
+  var raw = String(text || '').trim();
+  if(!raw) return { corrected: '', fixes: [], score: 0 };
+  var corrected = raw, fixes = [], seen = {};
+
+  GRAMMAR_RULES.forEach(function(rule){
+    corrected = corrected.replace(rule.re, function(){
+      var args = Array.prototype.slice.call(arguments);
+      var match = args[0], offset = args[args.length - 2], fullStr = args[args.length - 1];
+      if(rule.check && !rule.check(match, fullStr, offset)) return match;
+      var replacement = rule.fix.apply(null, args);
+      if(replacement !== match && fixes.length < 4 && !seen[match.toLowerCase() + '->' + replacement.toLowerCase()]){
+        seen[match.toLowerCase() + '->' + replacement.toLowerCase()] = true;
+        fixes.push({ wrong: match, right: replacement, why: rule.why, topic: rule.topic });
+      }
+      return replacement;
+    });
+  });
+
+  if(/^[a-z]/.test(corrected)){
+    var firstWord = corrected.split(/\s+/)[0];
+    var capWord = firstWord.charAt(0).toUpperCase() + firstWord.slice(1);
+    if(fixes.length < 4){
+      fixes.push({ wrong: firstWord, right: capWord, why: "ابدأ الجملة الإنجليزية دايماً بحرف كبير (Capital Letter).", topic: "Sentence Capitalization" });
+    }
+    corrected = corrected.charAt(0).toUpperCase() + corrected.slice(1);
+  }
+  if(corrected.length > 8 && !/[.!?]$/.test(corrected)) corrected += '.';
+
+  var words = raw.split(/\s+/).filter(Boolean).length;
+  var baseScore = Math.min(98, 74 + Math.min(22, words * 1.2));
+  var finalScore = Math.max(40, Math.round(baseScore - fixes.length * 11));
+  return { corrected: corrected, fixes: fixes, score: finalScore };
+}
+
+function generateLocalChatReply(userText, level, scenario){
+  var check = runLocalGrammarCheck(userText);
+  var low = userText.toLowerCase();
+  var reply = "", tip = "";
+
+  if(scenario === 'interview'){
+    reply = level === 'A2'
+      ? "Thank you for sharing that! Why do you want to work with our company?"
+      : (level === 'C1'
+        ? "That demonstrates strong leadership under pressure. How do you align your team's priorities when deadlines shift unexpectedly?"
+        : "That is great experience! Can you tell me about a challenge you solved at work recently?");
+    tip = "في مقابلات العمل، استخدم أفعال إنجاز قوية مثل: managed, achieved, collaborated, resolved.";
+  } else if(scenario === 'media'){
+    reply = level === 'C1'
+      ? "Spot on. When engagement metrics drive editorial choices, sensationalism often overshadows nuance. How can newsrooms restore audience trust?"
+      : "Digital media is changing fast! How do you verify if a piece of news on social media is accurate?";
+    tip = "مصطلح إعلامي مفيد: Fact-checking (تدقيق الحقائق والمصادر).";
+  } else if(scenario === 'cafe'){
+    reply = "Sure thing! Would you like your coffee hot or iced, and would you care for a croissant with that?";
+    tip = "للطلب بلطف في مطعم أو كافيه بنقول: Could I have... أو I'd like to order...";
+  } else if(/\b(work|job|office|meeting|boss|project|client|colleague|career|social media)\b/.test(low)){
+    var workReplies = {
+      A2: "That sounds like a busy day at work! Do you work in an office or from home?",
+      B1: "Work can definitely keep you busy! What part of your job do you enjoy the most?",
+      B2: "Balancing daily tasks and tight deadlines takes skill. How do you usually handle stressful days at work?",
+      C1: "That gives a compelling glimpse into your professional routine. How do you see your industry evolving over the next few years?"
+    };
+    reply = workReplies[level] || workReplies.B1;
+    tip = "تعبير طبيعي عن ضغط الشغل: I have a lot on my plate today (عندي مهام كتير النهارده).";
+  } else if(/\b(coffee|tea|breakfast|lunch|dinner|food|eat|ate|drink|drank|restaurant|cook)\b/.test(low)){
+    reply = level === 'A2'
+      ? "I love coffee too! What do you usually eat for breakfast?"
+      : "Nothing beats a good meal or a fresh cup of coffee to recharge! What is your favorite dish to cook or order on weekends?";
+    tip = "بدل ما تقول very tasty تقدر تستخدم كلمة delicious أو flavorful.";
+  } else if(/\b(difference|mean|grammar|explain|how do i say)\b/.test(low)){
+    reply = "Great grammar question! In English, context is everything. Try putting that word into a full sentence about your day!";
+    tip = "أفضل طريقة لتثبيت القاعدة هي استخدامها في جملة حقيقية تخص يومك أو شغلك.";
+  } else {
+    var byLvl = {
+      A2: [
+        "That is very nice! What do you like to do in your free time?",
+        "Good sentence! Did you go out today or stay at home?",
+        "I understand! Tell me about your favorite hobby or sport."
+      ],
+      B1: [
+        "Thanks for sharing that! Could you tell me a bit more about what happened next?",
+        "That sounds interesting! Do you usually do that every week, or was today special?",
+        "Good point! If you could change one thing about your daily routine, what would it be?"
+      ],
+      B2: [
+        "That's a thoughtful perspective! What do you think is the main reason behind that trend?",
+        "Interesting point! How has that experience influenced the way you plan your goals?",
+        "I completely see where you're coming from. Would you say most people in your field agree with that?"
+      ],
+      C1: [
+        "That's a nuanced observation. To what extent do you think cultural factors play a role in that?",
+        "Compelling argument! How would you counter someone who takes the opposite view?",
+        "Well articulated! What long-term implications do you foresee if this continues?"
+      ]
+    };
+    var arr = byLvl[level] || byLvl.B1;
+    reply = arr[CH.length % arr.length];
+    tip = check.fixes.length
+      ? "راجع التصحيح البسيط فوق وجرّب تستخدم الصيغة الصح في رسالتك الجاية!"
+      : "جملتك ممتازة! جرّب تضيف رابط مثل However أو Furthermore لإثراء أسلوبك.";
+  }
+
+  return { reply: reply, fixes: check.fixes.slice(0, 3), tip: tip };
+}
+
+function generateLocalWritingAnalysis(userText, level){
+  var check = runLocalGrammarCheck(userText);
+  var praises = [
+    "مجهود ممتاز وأفكارك واضحة ومنظمة!",
+    "كتابة جميلة جداً وتعبيرك عن الفكرة مباشر ومفهوم!",
+    "بداية هايلة! أسلوبك بيتطور واختيارك للكلمات مناسب لمستواك."
+  ];
+  var tipsByLevel = {
+    A2: "جرّب تربط الجمل القصيرة بكلمات زي (because / so / when) عشان فقرتك تبان متماسكة أكتر.",
+    B1: "استخدم كلمات انتقال زي (First, / In addition, / However,) في بداية الجمل لتنظيم الفقرة.",
+    B2: "لتقوية أسلوبك في المستوى ده، استخدم عبارات مثل (Not only... but also) أو (Despite + noun/-ing).",
+    C1: "ممتاز! لرفع مستوى الكتابة الاحترافية، استخدم أفعال دقيقة مثل (undermine / foster / hinge on)."
+  };
+  return {
+    score: check.score,
+    corrected: check.corrected,
+    mistakes: check.fixes,
+    praise: praises[userText.length % praises.length],
+    tip: tipsByLevel[level] || tipsByLevel.B1
+  };
+}
+
+/* =========================================================================
+   8. طبقة الذكاء الاصطناعي الهجينة
+   ========================================================================= */
+function extractJSON(txt){
+  var clean = String(txt || '').replace(/```json|```/gi, '').trim();
+  try { return JSON.parse(clean); } catch(e){}
+  var mObj = clean.match(/\{[\s\S]*\}/);
+  if(mObj){ try { return JSON.parse(mObj[0]); } catch(e){} }
+  var mArr = clean.match(/\[[\s\S]*\]/);
+  if(mArr){ try { return JSON.parse(mArr[0]); } catch(e){} }
+  throw new Error('invalid_json');
+}
+
+function callExternalLLM(promptText){
+  var provider = store.get('api_provider', 'local');
+  var key = store.get('api_key', '');
+
+  if(window.claude && typeof window.claude.use === 'function'){
+    return Promise.resolve(window.claude.use('sample')).then(function(s){
+      if(!s) throw new Error('na');
+      if(s.json) return s.json(promptText);
+      return s(promptText).then(function(r){ return extractJSON(r.text); });
+    });
+  }
+  if(provider === 'gemini' && key){
+    return fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(key), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }], generationConfig: { temperature: 0.4 } })
+    }).then(function(res){ return res.json(); }).then(function(data){
+      var txt = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text;
+      if(!txt) throw new Error('api_err');
+      return extractJSON(txt);
+    });
+  }
+  if(provider === 'openai' && key){
+    return fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: promptText }], temperature: 0.4 })
+    }).then(function(res){ return res.json(); }).then(function(data){
+      var txt = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      if(!txt) throw new Error('api_err');
+      return extractJSON(txt);
+    });
+  }
+  return Promise.reject({ code: 'use_local' });
+}
+
+function ai(promptText, contextMeta){
+  return callExternalLLM(promptText).catch(function(){
+    return new Promise(function(resolve){
+      setTimeout(function(){
+        if(contextMeta && contextMeta.mode === 'chat'){
+          resolve(generateLocalChatReply(contextMeta.text, lvl(), contextMeta.scenario));
+        } else if(contextMeta && contextMeta.mode === 'analyze'){
+          resolve(generateLocalWritingAnalysis(contextMeta.text, lvl()));
+        } else if(contextMeta && contextMeta.mode === 'sentences'){
+          resolve((BANK[lvl()] || BANK.B1).slice());
+        } else {
+          resolve(generateLocalWritingAnalysis(promptText, lvl()));
+        }
+      }, 240);
+    });
+  });
+}
+
+/* =========================================================================
+   9. إدارة الحالة الشاملة + سجل خطوات الرجوع (Back Stack) + الحفظ الفوري
+   ========================================================================= */
+var TB = ['chat','video','practice','test','prog'];
+var TL = ['💬 محادثة','📹 فيديو AI','🎯 تدريب','📋 الاختبار','📈 تقدّمي'];
+var tab = 'chat';
+var S = null;
+var P = null;
+var HP = [];
+var HI = -1;
+var SNAP = null;
+var D = { tx: '', msg: '' };
+var SQ = [];
+var CH = [{ r: 't', t: 'Hi! What did you do today? Tell me about it in English.' }];
+var chatScenario = 'free';
+var busy = false;
+var saveTimer = null;
+var navStack = [];
+
+/* حالة مكالمة الفيديو التفاعلية */
+var VC = {
+  active: false,
+  persona: 'sarah',
+  scenario: 'free',
+  camOn: false,
+  autoListen: false,
+  status: 'جاهز لبدء المكالمة الصوتية/المرئية',
+  lastTutor: "Hi there! I'm Coach Sarah. Press the green microphone button whenever you're ready to speak!",
+  lastUser: '',
+  lastFix: null,
+  stream: null
+};
+
+/* حالة لعبة ترتيب الجمل */
+var WG = {
+  target: '',
+  Pool: [],
+  Picked: [],
+  done: false,
+  won: false
+};
+
+var STEPS = [];
+function buildSteps(mode){
+  var m = mode || (S && S.mode) || 'general';
+  STEPS = [];
+  var mcqList = (m === 'general') ? MCQ_GENERAL : (MCQ_BY_LEVEL[m] || MCQ_BY_LEVEL.B1);
+  var lisList = (m === 'general') ? LIS_BY_LVL.ALL : (LIS_BY_LVL[m] || LIS_BY_LVL.B1);
+  var spkList = (m === 'general') ? SPK_BY_LVL.ALL : (SPK_BY_LVL[m] || SPK_BY_LVL.B1);
+  mcqList.forEach(function(q, i){ STEPS.push({ t: 'mcq', i: i }); });
+  lisList.forEach(function(q, i){ STEPS.push({ t: 'lis', i: i }); });
+  spkList.forEach(function(q, i){ STEPS.push({ t: 'spk', i: i }); });
+  STEPS.push({ t: 'wr', i: 0 });
+}
+buildSteps('general');
+
+function getActiveMCQ(){
+  var m = (S && S.mode) || 'general';
+  return m === 'general' ? MCQ_GENERAL : (MCQ_BY_LEVEL[m] || MCQ_BY_LEVEL.B1);
+}
+function getActiveLIS(){
+  var m = (S && S.mode) || 'general';
+  return m === 'general' ? LIS_BY_LVL.ALL : (LIS_BY_LVL[m] || LIS_BY_LVL.B1);
+}
+function getActiveSPK(){
+  var m = (S && S.mode) || 'general';
+  return m === 'general' ? SPK_BY_LVL.ALL : (SPK_BY_LVL[m] || SPK_BY_LVL.B1);
+}
+function getActiveWP(){
+  var m = (S && S.mode && S.mode !== 'general') ? S.mode : lvl();
+  return WP[m] || WP.B1;
+}
+
+function lvl(){ return store.get('lvl', 'B1'); }
+
+function pushNavState(){
+  navStack.push({
+    tab: tab,
+    pIdx: P ? HI : -1,
+    hasP: !!P,
+    testStep: S ? S.n : -1,
+    hasS: !!S
+  });
+  if(navStack.length > 25) navStack.shift();
+  updateBackBtn();
+}
+
+function updateBackBtn(){
+  var btn = $('#globalBackBtn');
+  if(!btn) return;
+  var canStepBackInTest = (tab === 'test' && S && S.n > 0);
+  var canStepBackInPractice = (tab === 'practice' && P !== null);
+  btn.disabled = !(navStack.length > 0 || canStepBackInTest || canStepBackInPractice);
+}
+
+function goBackStep(){
+  cap();
+  /* لو المستخدم داخل الاختبار وفي خطوة أكبر من 0، يرجع للخطوة السابقة مباشرة */
+  if(tab === 'test' && S && S.n > 0){
+    stepTest(-1);
+    return;
+  }
+  /* لو المستخدم داخل تمرين فرعي، يرجع للتمرين السابق أو قائمة التدريب */
+  if(tab === 'practice' && P){
+    if(HI > 0){
+      stepP(-1);
+    } else {
+      P = null;
+      render();
+      save();
+    }
+    return;
+  }
+  if(navStack.length > 0){
+    var prev = navStack.pop();
+    tab = prev.tab;
+    if(prev.tab === 'practice'){
+      HI = prev.pIdx;
+      P = (prev.hasP && HP[HI]) ? HP[HI] : null;
+    } else if(prev.tab === 'test' && S && prev.testStep >= 0){
+      S.n = prev.testStep;
+    }
+    render();
+    save();
+  }
+  updateBackBtn();
+}
+
+function changeLevel(newLvl){
+  if(['A2','B1','B2','C1'].indexOf(newLvl) === -1) return;
+  cap();
+  store.set('lvl', newLvl);
+  SQ = [];
+  var sel = $('#lvlSelect');
+  if(sel) sel.value = newLvl;
+  /* إذا كان المستخدم في تمرين لم يبدأ حله بعد، يتحدث التمرين فوراً للمستوى الجديد */
+  if(tab === 'practice' && P && !P.done){
+    if(P.m === 'game'){
+      initWordGame();
+    } else if(P.m !== 'write'){
+      P.s = pick(BANK[newLvl] || BANK.B1);
+    }
+  }
+  /* إذا كان في اختبار مخصص لمستوى معين ولم يبدأ حل الأسئلة، يتحدث لمستواه الجديد */
+  if(tab === 'test' && S && S.mode !== 'general' && Object.keys(S.stepData || {}).length === 0){
+    S.mode = newLvl;
+    buildSteps(newLvl);
+  }
+  awardXP(5);
+  showToast('تم تفعيل المستوى ' + newLvl + ' في المحادثة والتدريب والاختبار ✓');
+  render();
+  save();
+}
+
+function pick(a){ return a[Math.floor(Math.random() * a.length)]; }
+function avg(a){ return a.length ? Math.round(a.reduce(function(x,y){ return x+y; }, 0) / a.length) : 0; }
+
+function log(mode, score){
+  var h = store.get('hist', []);
+  h.push({ m: mode, s: Math.max(0, Math.min(100, Math.round(score || 0))), d: Date.now() });
+  store.set('hist', h.slice(-80));
+}
+
+function saveTopics(m){
+  var t = store.get('topics', {});
+  (m || []).forEach(function(x){
+    if(x && x.topic) t[x.topic] = (t[x.topic] || 0) + 1;
+  });
+  store.set('topics', t);
+}
+
+function top3(){
+  var t = store.get('topics', {});
+  return Object.keys(t).sort(function(a,b){ return t[b] - t[a]; }).slice(0, 3).join(', ');
+}
+
+function cap(){
+  var tx = $('#tx'), mg = $('#msg');
+  if(tab === 'practice' && P && tx){
+    P.tx = tx.value;
+  }
+  if(tab === 'test' && S && tx){
+    D.tx = tx.value;
+    S.stepData = S.stepData || {};
+    var cur = S.stepData[S.n] || {};
+    cur.tx = tx.value;
+    S.stepData[S.n] = cur;
+    if(STEPS[S.n] && STEPS[S.n].t === 'wr'){
+      S.wr = tx.value;
+    }
+  }
+  if(tab === 'chat' && mg){
+    D.msg = mg.value;
+  }
+}
+
+function buildFullStatePayload(){
+  var cleanHP = HP.slice(-30).map(function(item){
+    return {
+      m: item.m,
+      s: item.s || '',
+      tx: item.tx || '',
+      done: !!item.done,
+      sc: typeof item.sc === 'number' ? item.sc : null,
+      said: item.said || '',
+      fbData: item.fbData || null
+    };
+  });
+  return {
+    tab: tab,
+    lvl: lvl(),
+    hp: cleanHP,
+    hi: HI,
+    pm: !P,
+    sq: SQ.slice(0, 12),
+    ch: CH.slice(-60),
+    snap: S ? JSON.stringify(S) : null,
+    tx: D.tx,
+    msg: D.msg,
+    xp: store.get('xp', 0),
+    streak: store.get('streak', { count: 1, lastDay: new Date().toDateString() }),
+    badges: store.get('badges', {}),
+    hist: store.get('hist', []),
+    topics: store.get('topics', {}),
+    result: store.get('result', null)
+  };
+}
+
+function save(){
+  try {
+    cap();
+    SNAP = S ? JSON.stringify(S) : null;
+    var payload = buildFullStatePayload();
+    store.set('state', payload);
+    /* حفظ متزامن في جسر Canvas الدائم (window.pageVault) إن وجد */
+    if(window.pageVault && typeof window.pageVault.save === 'function'){
+      window.pageVault.save('app.state', payload);
+    }
+    var b = $('#engineBadge');
+    if(b){
+      b.textContent = '💾 محفوظ تلقائياً ✓';
+    }
+  } catch(e){}
+}
+
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 250);
+}
+
+function restoreFromPayload(s){
+  if(!s || typeof s !== 'object') return;
+  if(s.lvl && ['A2','B1','B2','C1'].indexOf(s.lvl) > -1) store.set('lvl', s.lvl);
+  if(typeof s.xp === 'number') store.set('xp', s.xp);
+  if(s.streak) store.set('streak', s.streak);
+  if(s.badges) store.set('badges', s.badges);
+  if(Array.isArray(s.hist)) store.set('hist', s.hist);
+  if(s.topics) store.set('topics', s.topics);
+  if(s.result) store.set('result', s.result);
+
+  tab = TB.indexOf(s.tab) > -1 ? s.tab : 'chat';
+  HP = Array.isArray(s.hp) ? s.hp : [];
+  HI = typeof s.hi === 'number' ? s.hi : -1;
+  SQ = Array.isArray(s.sq) ? s.sq : [];
+  if(Array.isArray(s.ch) && s.ch.length) CH = s.ch;
+  SNAP = s.snap || null;
+  try {
+    S = SNAP ? JSON.parse(SNAP) : null;
+    if(S && S.mode) buildSteps(S.mode);
+  } catch(e){ S = null; }
+  P = (!s.pm && HP[HI]) ? HP[HI] : null;
+  D = { tx: s.tx || '', msg: s.msg || '' };
+}
+
+function nav(){
+  var sel = $('#lvlSelect');
+  if(sel) sel.value = lvl();
+  $('#nav').innerHTML = TB.map(function(t, i){
+    return '<button type="button" class="' + (tab === t ? 'on' : '') + '" onclick="tabTo(' + i + ')">' + TL[i] + '</button>';
+  }).join('');
+  updateBackBtn();
+  updateGamificationUI();
+}
+
+function tabTo(i){
+  if(TB[i] !== tab) pushNavState();
+  cap();
+  if(tab === 'video' && TB[i] !== 'video') stopUserCam();
+  tab = TB[i];
+  render();
+  save();
+}
+
+function go(t){
+  if(t !== tab || (t === 'practice' && P !== null)) pushNavState();
+  cap();
+  if(tab === 'video' && t !== 'video') stopUserCam();
+  tab = t;
+  if(t === 'practice') P = null;
+  render();
+  save();
+}
+
+function render(){
+  nav();
+  if(tab === 'chat') rChat();
+  else if(tab === 'video') rVideo();
+  else if(tab === 'test') rTest();
+  else if(tab === 'practice'){ rPractice(); pExtra(); }
+  else rProg();
+}
+
+/* =========================================================================
+   10. قسم المحادثة الذكية المتكيفة مع المستوى والسيناريو (Chat Tab)
+   ========================================================================= */
+function rChat(){
+  var curLvl = lvl();
+  var starters = CHAT_STARTERS_BY_LVL[curLvl] || CHAT_STARTERS_BY_LVL.B1;
+  var idiom = IDIOMS_BY_LVL[curLvl] || IDIOMS_BY_LVL.B1;
+
+  var resumeBanner = '';
+  if(S && S.n < STEPS.length){
+    resumeBanner = '<div class="fb warn" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">' +
+      '<span>📌 لديك اختبار غير مكتمل متوقف عند الخطوة <b>' + (S.n + 1) + ' من ' + STEPS.length + '</b></span>' +
+      '<button type="button" class="b p" style="padding:6px 12px;font-size:14px" onclick="go(\'test\')">استكمال الاختبار ⬅</button>' +
+    '</div>';
+  }
+
+  app.innerHTML =
+    resumeBanner +
+    '<div class="card" style="padding:13px 16px;background:var(--acs)">' +
+      '<div class="stat" style="border:0;padding:0">' +
+        '<span>💡 <b>مصطلح اليوم لمستوى ' + esc(curLvl) + ':</b> <span class="en" style="font-weight:700">' + esc(idiom.phrase) + '</span> — ' + esc(idiom.ar) + '</span>' +
+        '<button type="button" class="icon-btn" onclick="say(\'' + esc(idiom.phrase + '. ' + idiom.ex) + '\',.88)">🔊 اسمعه</button>' +
+      '</div>' +
+      '<div class="en mut" style="margin-top:4px;font-size:15px">Example: "' + esc(idiom.ex) + '"</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="stat" style="border:0;padding:0 0 6px">' +
+        '<h2>محادثة مع المدرّب (' + esc(curLvl) + ')</h2>' +
+        '<button type="button" class="icon-btn" style="background:var(--ac);color:#fff;border-color:var(--ac)" onclick="go(\'video\')">📹 ابدأ مكالمة فيديو AI</button>' +
+      '</div>' +
+      '<p class="mut" style="margin:2px 0 8px">اختر سيناريو المحادثة أو اضغط على أي جملة مقترحة لمستوى <b>' + esc(curLvl) + '</b>:</p>' +
+      '<div class="chips">' +
+        '<button type="button" class="chip ' + (chatScenario==='free'?'active':'') + '" onclick="setScenario(\'free\')">🗣️ محادثة حرة</button>' +
+        '<button type="button" class="chip ' + (chatScenario==='interview'?'active':'') + '" onclick="setScenario(\'interview\')">💼 مقابلة عمل</button>' +
+        '<button type="button" class="chip ' + (chatScenario==='media'?'active':'') + '" onclick="setScenario(\'media\')">📰 نقاش إعلامي</button>' +
+        '<button type="button" class="chip ' + (chatScenario==='cafe'?'active':'') + '" onclick="setScenario(\'cafe\')">☕ في كافيه/مطعم</button>' +
+      '</div>' +
+      '<div class="chips">' +
+        starters.map(function(st, idx){
+          return '<button type="button" class="chip" onclick="useStarter(' + idx + ')">✨ ' + esc(st.slice(0, 36)) + '…</button>';
+        }).join('') +
+      '</div>' +
+      '<div id="log" class="chat-scroll"></div>' +
+      '<textarea id="msg" style="min-height:74px;margin-top:8px" placeholder="Write in English… (اضغط Enter للإرسال)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendC()}" oninput="scheduleSave()"></textarea>' +
+      '<div class="row">' +
+        '<button type="button" class="b p" onclick="sendC()">إرسال</button>' +
+        '<button type="button" class="b" onclick="micC()">🎤 اتكلم</button>' +
+        '<button type="button" class="b" onclick="resetChat()">محادثة جديدة</button>' +
+      '</div>' +
+    '</div>';
+  var mg = $('#msg');
+  if(mg && D.msg) mg.value = D.msg;
+  drawLog();
+}
+
+function setScenario(sc){
+  chatScenario = sc;
+  var greetings = {
+    free: "Hi! What did you do today? Tell me about it in English.",
+    interview: "Welcome to the interview! Let's start: could you tell me a little about your background and current role?",
+    media: "Welcome to our editorial roundtable! How do you think digital platforms are changing news today?",
+    cafe: "Good morning! Welcome to Cairo Brew Café. What can I get started for you today?"
+  };
+  if(CH.length <= 1){
+    CH = [{ r: 't', t: greetings[sc] || greetings.free }];
+  } else {
+    CH.push({ r: 't', t: greetings[sc] || greetings.free });
+  }
+  rChat();
+  save();
+}
+
+function useStarter(idx){
+  var starters = CHAT_STARTERS_BY_LVL[lvl()] || CHAT_STARTERS_BY_LVL.B1;
+  var mg = $('#msg');
+  if(!mg) return;
+  mg.value = starters[idx] || '';
+  D.msg = mg.value;
+  mg.focus();
+  scheduleSave();
+}
+
+function resetChat(){
+  CH = [{ r: 't', t: 'Hi! What did you do today? Tell me about it in English.' }];
+  D.msg = '';
+  drawLog();
+  save();
+}
+
+function drawLog(){
+  var l = $('#log');
+  if(!l) return;
+  var h = CH.map(function(m, i){
+    if(m.r === 'u'){
+      return '<div class="card en" style="background:var(--acs);margin:8px 0;padding:12px 15px">' + esc(m.t) + '</div>';
+    }
+    var fx = (m.fx || []).map(function(x){
+      return '<div class="mut" style="margin-top:8px;padding:6px 10px;background:var(--bg);border-radius:8px">' +
+        '<span class="en"><s style="color:var(--bad)">' + esc(x.wrong) + '</s> → <b style="color:var(--ok)">' + esc(x.right) + '</b></span>' +
+        (x.topic ? ' <span class="badge" style="font-size:11px">' + esc(x.topic) + '</span>' : '') +
+        '<br>' + esc(x.why) +
+      '</div>';
+    }).join('');
+    return '<div class="card" style="margin:8px 0;padding:14px 16px">' +
+      '<div class="en big" style="font-size:20px;margin:0 0 8px">' + esc(m.t) + '</div>' +
+      '<div class="row" style="margin:4px 0">' +
+        '<button type="button" class="b" style="padding:5px 12px;font-size:14px" onclick="say(CH[' + i + '].t,.9)">🔊</button>' +
+        '<button type="button" class="b" style="padding:5px 12px;font-size:14px" onclick="say(CH[' + i + '].t,.68)">🐢 ببطء</button>' +
+      '</div>' +
+      fx +
+      (m.tip ? '<div class="fb" style="background:var(--acs);margin-bottom:0">💡 ' + esc(m.tip) + '</div>' : '') +
+    '</div>';
+  }).join('');
+  if(busy) h += '<p class="mut">بكتب الرد والتصحيح…</p>';
+  l.innerHTML = h;
+  l.scrollTop = l.scrollHeight;
+}
+
+function sendC(){
+  var el = $('#msg');
+  if(!el) return;
+  var t = el.value.trim();
+  if(!t || busy) return;
+  el.value = '';
+  D.msg = '';
+  CH.push({ r: 'u', t: t });
+  busy = true;
+  drawLog();
+  var tr = CH.slice(-9).map(function(m){ return (m.r === 'u' ? 'Student: ' : 'Tutor: ') + m.t; }).join('\n');
+  var prompt = 'You are a warm English conversation tutor for an Egyptian Arabic speaker (CEFR ' + lvl() + ', scenario: ' + chatScenario + '). Reply in natural English at that level, 1-3 short sentences, ending with a question. Learner weak topics: ' + (top3() || 'unknown') + '.\n\n' + tr + '\n\nReturn ONLY JSON: {"reply":"","fixes":[{"wrong":"","right":"","why":"short explanation in simple Egyptian Arabic","topic":"grammar topic in English"}],"tip":"optional one-line tip in Egyptian Arabic, or empty"}. fixes: only real mistakes in the LAST student message, max 3, empty array if none.';
+
+  ai(prompt, { mode: 'chat', text: t, scenario: chatScenario }).then(function(r){
+    busy = false;
+    var replyText = (r && r.reply) ? r.reply : 'That sounds interesting! Could you tell me more about it?';
+    var fixes = (r && Array.isArray(r.fixes)) ? r.fixes : [];
+    CH.push({ r: 't', t: replyText, fx: fixes, tip: r ? r.tip : '' });
+    saveTopics(fixes);
+    log('chat', Math.max(40, 100 - 20 * fixes.length));
+    awardXP(12);
+    drawLog();
+    save();
+    say(replyText, LEVEL_SPEED[lvl()] || 0.9);
+  });
+}
+
+function micC(){
+  var m = $('#msg');
+  if(m) m.placeholder = '🎤 اتكلم دلوقتي… بسمعك';
+  listen(function(t){
+    var el = $('#msg');
+    if(el){
+      el.value = (el.value + ' ' + t).trim();
+      D.msg = el.value;
+      el.placeholder = 'Write in English…';
+      scheduleSave();
+    }
+  }, function(){
+    var el = $('#msg');
+    if(el) el.placeholder = 'الميكروفون مش متاح في المتصفح ده، اكتب رسالتك هنا.';
+    showToast('تعذّر تشغيل الميكروفون، تأكد من السماح للمتصفح.');
+  });
+}
+
+/* =========================================================================
+   11. قسم مكالمة الفيديو التفاعلية مع الذكاء الاصطناعي (AI Video Call Tab)
+   ========================================================================= */
+function rVideo(){
+  var isSarah = VC.persona === 'sarah';
+  app.innerHTML =
+    '<div class="card">' +
+      '<div class="stat" style="border:0;padding:0 0 8px">' +
+        '<h2>📹 مكالمة فيديو مباشرة مع المدرّب (' + esc(lvl()) + ')</h2>' +
+        '<div class="row" style="margin:0">' +
+          '<button type="button" class="chip ' + (isSarah?'active':'') + '" onclick="switchCoachPersona(\'sarah\')">👩‍🏫 Coach Sarah (US)</button>' +
+          '<button type="button" class="chip ' + (!isSarah?'active':'') + '" onclick="switchCoachPersona(\'liam\')">👨‍🏫 Coach Liam (UK)</button>' +
+        '</div>' +
+      '</div>' +
+      '<p class="mut" style="margin:0 0 10px">تكلّم وجهاً لوجه بالصوت والصورة! المدرّب يتفاعل معك بحركة الشفاه والصوت حسب مستواك (<b>' + esc(lvl()) + '</b>)، ويصحح لك أخطاءك بلطف على الشاشة.</p>' +
+
+      '<div id="videoStage" class="video-stage">' +
+        /* نافذة كاميرا المستخدم PiP */
+        '<div class="pip-cam" id="pipBox">' +
+          '<video id="userCamVideo" autoplay playsinline muted style="display:' + (VC.camOn ? 'block' : 'none') + '"></video>' +
+          '<span id="pipPlaceholder" style="display:' + (VC.camOn ? 'none' : 'block') + '">📷 كاميرتك مغلقة</span>' +
+        '</div>' +
+
+        '<div id="vcStatus" class="call-status">' + esc(VC.status) + '</div>' +
+
+        /* أفاتار المدرّب المتحرك (SVG تفاعلي مع حركة شفاه وعيون) */
+        '<div class="avatar-wrap">' +
+          '<div class="pulse-ring"></div>' +
+          '<svg viewBox="0 0 160 160" width="150" height="150" aria-label="AI Coach Avatar">' +
+            '<circle cx="80" cy="80" r="76" fill="' + (isSarah ? '#312e81' : '#1e3a8a') + '" stroke="#818cf8" stroke-width="3"/>' +
+            /* الشعر */
+            (isSarah
+              ? '<path d="M28 85 C25 32, 135 32, 132 85 C132 115, 122 132, 115 136 C115 95, 110 60, 80 56 C50 60, 45 95, 45 136 C38 132, 28 115, 28 85 Z" fill="#1e1b4b"/>'
+              : '<path d="M36 68 C38 30, 122 30, 124 68 C115 48, 45 48, 36 68 Z" fill="#0f172a"/>') +
+            /* الوجه */
+            '<ellipse cx="80" cy="86" rx="38" ry="44" fill="#fde68a"/>' +
+            /* العينان */
+            '<circle cx="65" cy="78" r="4.5" fill="#1e293b"/>' +
+            '<circle cx="95" cy="78" r="4.5" fill="#1e293b"/>' +
+            '<path d="M56 68 Q65 63 73 68" stroke="#1e293b" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+            '<path d="M87 68 Q95 63 104 68" stroke="#1e293b" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+            /* الفم المتحرك أثناء النطق */
+            '<ellipse id="avatarMouth" cx="80" cy="106" rx="11" ry="4" fill="#be123c"/>' +
+          '</svg>' +
+        '</div>' +
+
+        /* صندوق الترجمة النصية الفورية والتصحيح */
+        '<div class="subtitles-box">' +
+          '<div class="en" id="vcTutorSub" style="font-size:19px;font-weight:600;color:#fff">' + esc(VC.lastTutor) + '</div>' +
+          (VC.lastUser ? '<div class="en mut" style="margin-top:6px;color:#93c5fd">You said: "' + esc(VC.lastUser) + '"</div>' : '') +
+          (VC.lastFix ? '<div style="margin-top:6px;font-size:14px;color:#6ee7a8">💡 تصحيح سريع: <span class="en"><s>' + esc(VC.lastFix.wrong) + '</s> → <b>' + esc(VC.lastFix.right) + '</b></span> (' + esc(VC.lastFix.why) + ')</div>' : '') +
+        '</div>' +
+
+        /* أزرار التحكم في المكالمة */
+        '<div class="call-controls">' +
+          '<button type="button" id="vcMicBtn" class="call-btn mic" onclick="talkInVideoCall()">🎤 اضغط وتكلّم</button>' +
+          '<button type="button" class="call-btn cam" onclick="say(VC.lastTutor)">🔊 إعادة سماع المدرّب</button>' +
+          '<button type="button" class="call-btn cam" onclick="toggleUserCam()">' + (VC.camOn ? '🚫 إغلاق كاميرتي' : '📷 تشغيل كاميرتي') + '</button>' +
+        '</div>' +
+      '</div>' +
+
+      /* إدخال نصي بديل لو الميكروفون غير متاح في المتصفح */
+      '<div class="row" style="margin-top:12px">' +
+        '<input type="text" id="vcTextInput" placeholder="أو اكتب ردّك للمدرّب هنا واضغط Enter…" style="flex:1" onkeydown="if(event.key===\'Enter\')sendVideoText()">' +
+        '<button type="button" class="b p" onclick="sendVideoText()">إرسال للمدرّب</button>' +
+      '</div>' +
+    '</div>';
+
+  if(VC.camOn && VC.stream){
+    var vEl = $('#userCamVideo');
+    if(vEl) vEl.srcObject = VC.stream;
+  }
+}
+
+var mouthTimer = null;
+function setAvatarSpeaking(isSpeaking){
+  var stg = $('#videoStage');
+  var mouth = $('#avatarMouth');
+  clearInterval(mouthTimer);
+  if(stg){
+    stg.classList.toggle('speaking', !!isSpeaking);
+    if(isSpeaking) stg.classList.remove('listening');
+  }
+  if(isSpeaking && mouth){
+    var open = false;
+    mouthTimer = setInterval(function(){
+      open = !open;
+      var m = $('#avatarMouth');
+      if(m) m.setAttribute('ry', open ? '9' : '3');
+    }, 140);
+  } else if(mouth){
+    mouth.setAttribute('ry', '4');
+  }
+}
+
+function switchCoachPersona(p){
+  VC.persona = p;
+  VC.lastTutor = p === 'sarah'
+    ? "Hi! I'm Coach Sarah. What would you like to talk about today?"
+    : "Hello! Coach Liam here. Shall we practice some English conversation together?";
+  rVideo();
+  coachSpeakVideo(VC.lastTutor);
+}
+
+function coachSpeakVideo(text){
+  VC.status = '🗣️ المدرّب يتحدث الآن…';
+  if($('#vcStatus')) $('#vcStatus').textContent = VC.status;
+  say(text, LEVEL_SPEED[lvl()] || 0.9, function(){
+    setAvatarSpeaking(true);
+  }, function(){
+    setAvatarSpeaking(false);
+    VC.status = '✅ دورك الآن — اضغط (اضغط وتكلّم)';
+    if($('#vcStatus')) $('#vcStatus').textContent = VC.status;
+  });
+}
+
+function talkInVideoCall(){
+  var stg = $('#videoStage');
+  var btn = $('#vcMicBtn');
+  if(stg) stg.classList.add('listening');
+  if(btn){
+    btn.classList.add('listening');
+    btn.textContent = '🎙️ أستمع إليك الآن… تكلّم';
+  }
+  VC.status = '🎙️ أستمع إليك… تحدّث بالإنجليزية';
+  if($('#vcStatus')) $('#vcStatus').textContent = VC.status;
+
+  listen(function(transcript){
+    if(stg) stg.classList.remove('listening');
+    if(btn){
+      btn.classList.remove('listening');
+      btn.textContent = '🎤 اضغط وتكلّم';
+    }
+    handleVideoUserTurn(transcript);
+  }, function(){
+    if(stg) stg.classList.remove('listening');
+    if(btn){
+      btn.classList.remove('listening');
+      btn.textContent = '🎤 اضغط وتكلّم';
+    }
+    VC.status = '⚠️ تعذّر التقاط الصوت — يمكنك المحاولة مجدداً أو الكتابة بالأسفل';
+    if($('#vcStatus')) $('#vcStatus').textContent = VC.status;
+  });
+}
+
+function sendVideoText(){
+  var inp = $('#vcTextInput');
+  if(!inp || !inp.value.trim()) return;
+  var t = inp.value.trim();
+  inp.value = '';
+  handleVideoUserTurn(t);
+}
+
+function handleVideoUserTurn(userSpeech){
+  VC.lastUser = userSpeech;
+  VC.status = '⏳ المدرّب يحلل كلامك ويجهز الرد…';
+  rVideo();
+  var prompt = 'You are in a live face-to-face English video call with an Egyptian learner at CEFR level ' + lvl() + '. Keep your spoken reply natural, warm, and concise (1-2 sentences ending with an engaging question). Student said: "' + userSpeech + '". Return ONLY JSON: {"reply":"","fixes":[{"wrong":"","right":"","why":"short explanation in Egyptian Arabic","topic":""}]}';
+
+  ai(prompt, { mode: 'chat', text: userSpeech, scenario: chatScenario }).then(function(r){
+    var rep = (r && r.reply) ? r.reply : "That's really interesting! Tell me more about that.";
+    var fixes = (r && Array.isArray(r.fixes)) ? r.fixes : [];
+    VC.lastTutor = rep;
+    VC.lastFix = fixes.length ? fixes[0] : null;
+    CH.push({ r: 'u', t: userSpeech });
+    CH.push({ r: 't', t: rep, fx: fixes });
+    saveTopics(fixes);
+    log('speak', Math.max(60, 100 - fixes.length * 15));
+    awardXP(18, 'video_star');
+    rVideo();
+    save();
+    coachSpeakVideo(rep);
+  });
+}
+
+function toggleUserCam(){
+  if(VC.camOn){
+    stopUserCam();
+    rVideo();
+    return;
+  }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    showToast('الكاميرا غير مدعومة في هذا المتصفح');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 }, audio: false }).then(function(stream){
+    VC.stream = stream;
+    VC.camOn = true;
+    rVideo();
+  }).catch(function(){
+    showToast('لم يتم السماح للكاميرا — يمكنك المتابعة بالصوت فقط');
+  });
+}
+
+function stopUserCam(){
+  if(VC.stream){
+    try { VC.stream.getTracks().forEach(function(tr){ tr.stop(); }); } catch(e){}
+  }
+  VC.stream = null;
+  VC.camOn = false;
+}
+
+/* =========================================================================
+   12. قسم الاختبار المتكامل مع حفظ كل خطوة وزر العودة للخطوة السابقة
+   ========================================================================= */
+function startTest(mode){
+  var chosenMode = mode || 'general';
+  buildSteps(chosenMode);
+  S = { n: 0, mode: chosenMode, stepData: {}, wr: '' };
+  SNAP = JSON.stringify(S);
+  D.tx = '';
+  rTest();
+  save();
+}
+
+function stepTest(delta){
+  if(!S) return;
+  cap();
+  var target = S.n + delta;
+  if(target < 0 || target > STEPS.length) return;
+  S.n = target;
+  var curData = (S.stepData && S.stepData[S.n]) || {};
+  D.tx = curData.tx || '';
+  SNAP = JSON.stringify(S);
+  rTest();
+  save();
+}
+
+function nextT(){
+  stepTest(1);
+}
+
+function nextBtn(){
+  return '<div class="step-nav">' +
+    '<button type="button" class="b" onclick="stepTest(-1)" ' + (S && S.n > 0 ? '' : 'disabled') + '>⬅ الخطوة السابقة</button>' +
+    '<button type="button" class="b p" onclick="nextT()">الخطوة التالية (التالي) ➡</button>' +
+  '</div>';
+}
+
+function computeTestTotals(){
+  var mcqList = getActiveMCQ();
+  var mcqHits = 0, lisScores = [], spkScores = [];
+  var sd = (S && S.stepData) || {};
+  STEPS.forEach(function(st, idx){
+    var d = sd[idx];
+    if(!d) return;
+    if(st.t === 'mcq' && typeof d.choice === 'number'){
+      if(d.choice === mcqList[st.i][2]) mcqHits++;
+    } else if(st.t === 'lis' && typeof d.sc === 'number'){
+      lisScores.push(d.sc);
+    } else if(st.t === 'spk' && typeof d.sc === 'number'){
+      spkScores.push(d.sc);
+    }
+  });
+  return { mcq: mcqHits, mcqTotal: mcqList.length, lis: lisScores, spk: spkScores };
+}
+
+function rTest(){
+  if(!S){
+    var r = store.get('result', null);
+    var curLvl = lvl();
+    app.innerHTML =
+      '<div class="card">' +
+        '<h2>📋 اختبارات المستوى والتقييم</h2>' +
+        '<p>اختر نوع الاختبار المناسب لك. <b>تقدّمك محفوظ في كل سؤال</b>، وتقدر ترجع لأي خطوة سابقة وتعدّل إجابتك في أي وقت بدون ما يعيد من الأول:</p>' +
+        (r ? '<div class="fb ok">آخر نتيجة مسجّلة: <b class="en">' + esc(r.level) + '</b> (الدرجة الكلية: ' + (r.composite || Math.round(100*r.mcq/12)) + '%)</div>' : '') +
+        '<div class="card" style="background:var(--bg);margin-top:10px">' +
+          '<h3>1️⃣ اختبار تحديد المستوى الشامل (العام)</h3>' +
+          '<p class="mut" style="margin:4px 0 10px">١٧ خطوة متدرجة من A2 حتى C1 لتحديد مستواك الحقيقي في القواعد والسمع والنطق والكتابة.</p>' +
+          '<button type="button" class="b p" onclick="startTest(\'general\')">ابدأ الاختبار</button>' +
+        '</div>' +
+        '<div class="card" style="background:var(--bg);margin-bottom:0">' +
+          '<h3>2️⃣ اختبار مخصّص لمستواك المختار حالياً (<span class="en">' + esc(curLvl) + '</span>)</h3>' +
+          '<p class="mut" style="margin:4px 0 10px">١١ خطوة مركّزة لقياس إتقانك لقواعد ومهارات مستوى <b>' + esc(curLvl) + '</b> تحديداً (تقدر تغيّر المستوى من القائمة فوق).</p>' +
+          '<button type="button" class="b p" onclick="startTest(\'' + esc(curLvl) + '\')">🎯 ابدأ اختبار مستوى ' + esc(curLvl) + '</button>' +
+        '</div>' +
+      '</div>';
+    return;
+  }
+
+  buildSteps(S.mode || 'general');
+  if(S.n >= STEPS.length){
+    return rResult();
+  }
+
+  var st = STEPS[S.n];
+  var curData = (S.stepData && S.stepData[S.n]) || {};
+  var pct = Math.round(100 * S.n / STEPS.length);
+  var modeLabel = S.mode === 'general' ? 'الاختبار الشامل' : ('اختبار مستوى ' + S.mode);
+
+  var head =
+    '<div class="stat" style="border:0;padding:0 0 4px">' +
+      '<span class="mut"><b>' + esc(modeLabel) + '</b> — الخطوة ' + (S.n + 1) + ' من ' + STEPS.length + '</span>' +
+      '<div class="row" style="margin:0">' +
+        '<span class="badge">' + pct + '%</span>' +
+        '<button type="button" class="icon-btn" style="font-size:12px;padding:3px 8px" onclick="S=null;SNAP=null;save();rTest()">🔄 تغيير نوع الاختبار</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="bar"><i style="width:' + pct + '%"></i></div>';
+
+  if(st.t === 'mcq'){
+    var mcqList = getActiveMCQ();
+    var q = mcqList[st.i];
+    var hasAns = typeof curData.choice === 'number';
+    app.innerHTML = head +
+      '<div class="card">' +
+        '<p class="mut">اختار الإجابة الصح (تقدر تغيّر إجابتك أو ترجع للخطوة السابقة)</p>' +
+        '<div class="en big">' + esc(q[0]) + '</div>' +
+        q[1].map(function(o, k){
+          var cls = 'opt';
+          if(hasAns){
+            if(k === q[2]) cls += ' ok';
+            else if(k === curData.choice) cls += ' bad';
+          }
+          return '<button type="button" class="' + cls + '" onclick="ans(' + k + ')">' + esc(o) + '</button>';
+        }).join('') +
+        '<div id="fb">' +
+          (hasAns
+            ? '<div class="fb ' + (curData.choice === q[2] ? 'ok' : 'bad') + '">' +
+                (curData.choice === q[2] ? '✓ إجابة صحيحة! ' : '✗ الإجابة الأدق هي (' + esc(q[1][q[2]]) + '). ') +
+                esc(q[3] || '') +
+              '</div>' + nextBtn()
+            : '<div class="step-nav"><button type="button" class="b" onclick="stepTest(-1)" ' + (S.n > 0 ? '' : 'disabled') + '>⬅ الخطوة السابقة</button><span class="mut">اختر إجابة للمتابعة</span></div>') +
+        '</div>' +
+      '</div>';
+  } else if(st.t === 'lis'){
+    var lisList = getActiveLIS();
+    var targetSent = lisList[st.i];
+    var hasLis = typeof curData.sc === 'number';
+    app.innerHTML = head +
+      '<div class="card">' +
+        '<h2>🎧 سمع وإملاء</h2>' +
+        '<p class="mut">اسمع الجملة واكتب اللي سمعته بالإنجليزي.</p>' +
+        '<div class="row">' +
+          '<button type="button" class="b p" onclick="say(getActiveLIS()[' + st.i + '],.9)">🔊 اسمع</button>' +
+          '<button type="button" class="b" onclick="say(getActiveLIS()[' + st.i + '],.65)">🐢 ببطء</button>' +
+        '</div>' +
+        '<input type="text" id="tx" autocomplete="off" autocapitalize="off" placeholder="اكتب الجملة اللي سمعتها هنا…" value="' + esc(curData.tx || D.tx || '') + '" onkeydown="if(event.key===\'Enter\')chkLis()" oninput="scheduleSave()">' +
+        '<div class="row"><button type="button" id="chkLisBtn" class="b p" onclick="chkLis()">تحقق</button></div>' +
+        '<div id="fb">' +
+          (hasLis
+            ? '<div class="fb ' + (curData.sc >= 80 ? 'ok' : 'bad') + '">' +
+                '<div>نسبة التطابق: <b>' + curData.sc + '%</b></div>' +
+                '<div class="en" style="margin-top:6px">' + diffTargetHTML(curData.tx || '', targetSent) + '</div>' +
+              '</div>' + nextBtn()
+            : '<div class="step-nav"><button type="button" class="b" onclick="stepTest(-1)" ' + (S.n > 0 ? '' : 'disabled') + '>⬅ الخطوة السابقة</button></div>') +
+        '</div>' +
+      '</div>';
+  } else if(st.t === 'spk'){
+    var spkList = getActiveSPK();
+    var spkSent = spkList[st.i];
+    var hasSpk = typeof curData.sc === 'number';
+    app.innerHTML = head +
+      '<div class="card">' +
+        '<h2>🎤 نطق</h2>' +
+        '<p class="mut">اقرا الجملة بصوت واضح.</p>' +
+        '<div class="en big">' + esc(spkSent) + '</div>' +
+        '<div class="row">' +
+          '<button type="button" class="b" onclick="say(getActiveSPK()[' + st.i + '],.9)">🔊 اسمعها</button>' +
+          '<button type="button" id="micTestBtn" class="b p" onclick="micTest()">🎤 اتكلم</button>' +
+        '</div>' +
+        '<div id="fb">' +
+          (hasSpk
+            ? '<div class="fb ' + (curData.sc >= 75 ? 'ok' : 'bad') + '">' +
+                '<div>تطابق النطق: <b>' + curData.sc + '%</b></div>' +
+                (curData.said ? '<div class="en" style="margin-top:4px">سمعتك بتقول: "' + esc(curData.said) + '"</div>' : '') +
+              '</div>' + nextBtn()
+            : '<div class="step-nav"><button type="button" class="b" onclick="stepTest(-1)" ' + (S.n > 0 ? '' : 'disabled') + '>⬅ الخطوة السابقة</button></div>') +
+        '</div>' +
+      '</div>';
+  } else {
+    var wrPrompt = getActiveWP();
+    var savedWr = curData.tx || S.wr || D.tx || '';
+    app.innerHTML = head +
+      '<div class="card">' +
+        '<h2>✍️ كتابة</h2>' +
+        '<p class="mut">آخر خطوة! اكتب فقرة قصيرة، وهيتم تحليل قواعدك وأسلوبك فوراً.</p>' +
+        '<div class="en big">' + esc(wrPrompt) + '</div>' +
+        '<textarea id="tx" placeholder="Write your sentences here…" oninput="$(\'#wc\').textContent=this.value.trim()?this.value.trim().split(/\\s+/).length:0;scheduleSave()">' + esc(savedWr) + '</textarea>' +
+        '<p class="mut">الكلمات: <span id="wc">' + (savedWr.trim() ? savedWr.trim().split(/\s+/).length : 0) + '</span></p>' +
+        '<div class="step-nav">' +
+          '<button type="button" class="b" onclick="stepTest(-1)">⬅ الخطوة السابقة</button>' +
+          '<button type="button" class="b p" onclick="finishTest()">أنهِ الاختبار</button>' +
+        '</div>' +
+      '</div>';
+  }
+}
+
+function ans(k){
+  if(!S) return;
+  S.stepData = S.stepData || {};
+  var prev = S.stepData[S.n];
+  S.stepData[S.n] = { choice: k };
+  var q = getActiveMCQ()[STEPS[S.n].i];
+  if(!prev) awardXP(k === q[2] ? 10 : 4);
+  rTest();
+  save();
+}
+
+function chkLis(){
+  if(!S) return;
+  var txEl = $('#tx');
+  var val = txEl ? txEl.value.trim() : '';
+  if(!val){
+    $('#fb').innerHTML = '<div class="fb warn">اكتب اللي سمعته الأول قبل الضغط على تحقق.</div>';
+    return;
+  }
+  var targetSent = getActiveLIS()[STEPS[S.n].i];
+  var sc = sim(val, targetSent);
+  S.stepData = S.stepData || {};
+  if(!S.stepData[S.n] || typeof S.stepData[S.n].sc !== 'number') awardXP(12);
+  S.stepData[S.n] = { tx: val, sc: sc };
+  rTest();
+  save();
+}
+
+function micTest(){
+  if(!S) return;
+  var targetSent = getActiveSPK()[STEPS[S.n].i];
+  $('#fb').innerHTML = '<p class="mut">🎤 بسمعك… اقرا الجملة بصوت واضح</p>';
+  listen(function(t){
+    var sc = sim(t, targetSent);
+    S.stepData = S.stepData || {};
+    if(!S.stepData[S.n] || typeof S.stepData[S.n].sc !== 'number') awardXP(14);
+    S.stepData[S.n] = { said: t, sc: sc };
+    rTest();
+    save();
+  }, function(){
+    $('#fb').innerHTML =
+      '<p class="mut">الميكروفون مش متاح. قيّم نفسك:</p>' +
+      '<div class="row">' +
+        '<button type="button" class="b" onclick="selfSpk(40)">كانت صعبة</button>' +
+        '<button type="button" class="b" onclick="selfSpk(70)">تمام تقريبًا</button>' +
+        '<button type="button" class="b" onclick="selfSpk(100)">قلتها بسهولة</button>' +
+      '</div>';
+  });
+}
+
+function selfSpk(v){
+  if(!S) return;
+  S.stepData = S.stepData || {};
+  S.stepData[S.n] = { said: '', sc: v };
+  nextT();
+}
+
+function finishTest(){
+  if(!S) return;
+  var txEl = $('#tx');
+  S.wr = txEl ? txEl.value.trim() : (S.wr || '');
+  S.stepData = S.stepData || {};
+  S.stepData[S.n] = { tx: S.wr };
+  S.n = STEPS.length;
+  awardXP(30, 'test_done');
+  rResult();
+}
+
+function rResult(){
+  var totals = computeTestTotals();
+  var n = totals.mcq, mcqTotal = totals.mcqTotal || 12;
+  var mcqPct = Math.round(100 * n / mcqTotal);
+  var L = totals.lis.length ? avg(totals.lis) : 70;
+  var Sp = totals.spk.length ? avg(totals.spk) : 70;
+  var w = S.wr ? S.wr.split(/\s+/).filter(Boolean).length : 0;
+  var wrCheck = runLocalGrammarCheck(S.wr);
+  var WScore = w >= 4 ? wrCheck.score : Math.min(50, w * 12);
+
+  var composite = Math.round(mcqPct * 0.50 + L * 0.20 + Sp * 0.20 + WScore * 0.10);
+  var level = (S.mode && S.mode !== 'general')
+    ? S.mode
+    : (composite >= 82 && mcqPct >= 75 ? 'C1' : composite >= 64 && mcqPct >= 50 ? 'B2' : composite >= 42 ? 'B1' : 'A2');
+
+  var res = { level: level, mcq: n, mcqTotal: mcqTotal, lis: L, spk: Sp, words: w, composite: composite };
+  store.set('result', res);
+  store.set('lvl', level);
+  var sel = $('#lvlSelect');
+  if(sel) sel.value = level;
+  log('test', composite);
+
+  var weak = [];
+  if(mcqPct < 65) weak.push('القواعد والمفردات');
+  if(L < 70) weak.push('السمع');
+  if(Sp < 70) weak.push('النطق');
+  if(w < 20 || WScore < 65) weak.push('الكتابة');
+
+  var summary = 'نتيجة اختبار تحديد المستوى:\nالمستوى التقديري: ' + level +
+    ' (' + composite + '%)\nقواعد ومفردات: ' + n + '/' + mcqTotal + '\nسمع (إملاء): ' + L +
+    '%\nنطق: ' + Sp + '%\nكتابة (' + w + ' كلمة):\n' + (S.wr || '(لم يُكتب نص)') +
+    '\n\nعايزك تحلل كتابتي وتديني خطة تدريب أسبوعية.';
+
+  app.innerHTML =
+    '<div class="card">' +
+      '<div class="stat" style="border:0;padding:0">' +
+        '<p class="mut" style="margin:0">نتيجة الاختبار وتقييم المهارات</p>' +
+        '<button type="button" class="b" style="padding:5px 12px;font-size:14px" onclick="stepTest(-1)">⬅ مراجعة إجاباتي خطوة بخطوة</button>' +
+      '</div>' +
+      '<div class="lvl en">' + level + ' <span style="font-size:20px;color:var(--mut)">(' + composite + '%)</span></div>' +
+      '<div class="stat"><span>قواعد ومفردات (50%)</span><b>' + n + ' / ' + mcqTotal + ' (' + mcqPct + '%)</b></div>' +
+      '<div class="stat"><span>سمع وإملاء (20%)</span><b>' + L + '%</b></div>' +
+      '<div class="stat"><span>نطق وتحدّث (20%)</span><b>' + Sp + '%</b></div>' +
+      '<div class="stat"><span>كتابة وتعبير (10%)</span><b>' + w + ' كلمة (' + WScore + '%)</b></div>' +
+      (weak.length
+        ? '<p>أضعف نقطة عندك حالياً: <b>' + weak.join('، ') + '</b>. التمارين الجاية هتركّز عليها.</p>'
+        : '<p>أداؤك متوازن وممتاز في كل المهارات الأربعة!</p>') +
+      '<details style="margin:10px 0">' +
+        '<summary class="mut" style="cursor:pointer;font-weight:600">📋 عرض ملخص النتيجة لنسخه أو مشاركته</summary>' +
+        '<textarea id="sum" readonly style="min-height:95px;font-size:15px;margin-top:8px">' + esc(summary) + '</textarea>' +
+        '<div class="row"><button type="button" class="b" onclick="cp()">انسخ للتصحيح</button><span id="cpm" class="mut"></span></div>' +
+      '</details>' +
+      '<div class="row">' +
+        '<button type="button" class="b p" onclick="go(\'chat\')">ابدأ المحادثة</button>' +
+        '<button type="button" class="b" onclick="go(\'practice\')">تدريب</button>' +
+        '<button type="button" class="b" onclick="S=null;SNAP=null;save();rTest()">اختبار جديد</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<h2>تصحيح كتابتك</h2>' +
+      '<p class="mut" id="fbs">بحلّل كتابتك…</p>' +
+      '<div id="fbx"></div>' +
+    '</div>';
+
+  save();
+  if(w < 4){
+    $('#fbs').textContent = 'النص قصير جدًا للتصحيح (أقل من ٤ كلمات). يمكنك الضغط على (مراجعة إجاباتي) لإضافة جمل أو تجربة قسم التدريب.';
+    return;
+  }
+  analyze(S.wr, getActiveWP(), '#fbx', '#fbs');
+}
+
+function cp(){
+  var t = $('#sum');
+  if(!t) return;
+  t.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch(e){}
+  if(!ok && navigator.clipboard){
+    navigator.clipboard.writeText(t.value).then(function(){
+      if($('#cpm')) $('#cpm').textContent = '✓ اتنسخت!';
+      showToast('تم نسخ النص إلى الحافظة');
+    }, function(){});
+  } else {
+    if($('#cpm')) $('#cpm').textContent = ok ? '✓ اتنسخت!' : 'ظلّل النص وانسخه يدويًا';
+    if(ok) showToast('تم نسخ النص إلى الحافظة');
+  }
+}
+
+/* =========================================================================
+   13. تحليل الكتابة وعرض التغذية الراجعة
+   ========================================================================= */
+function renderFBHTML(r, rawText){
+  var m = (r && r.mistakes) || [];
+  var corr = (r && r.corrected) || rawText || '';
+  var sc = Math.round((r && r.score) || 80);
+  return '<div class="fb ok">' + esc((r && r.praise) || 'أحسنت!') + ' (التقييم: <b>' + sc + '%</b>)</div>' +
+    (m.length
+      ? m.map(function(x){
+          return '<div class="mut" style="margin:8px 0;padding:8px 10px;background:var(--bg);border-radius:10px">' +
+            '<span class="en"><s style="color:var(--bad)">' + esc(x.wrong) + '</s> → <b style="color:var(--ok)">' + esc(x.right) + '</b></span>' +
+            (x.topic ? ' <span class="badge" style="font-size:11px">' + esc(x.topic) + '</span>' : '') +
+            '<br>' + esc(x.why) +
+          '</div>';
+        }).join('')
+      : '<p style="color:var(--ok);font-weight:600">✓ مفيش أخطاء نحوية أو إملائية واضحة في نصك!</p>') +
+    '<p class="mut" style="margin-bottom:4px">النص بعد التصحيح:</p>' +
+    '<div class="en" style="padding:10px 12px;background:var(--bg);border-radius:10px">' + esc(corr) + '</div>' +
+    (r && r.tip ? '<div class="fb" style="background:var(--acs)">💡 ' + esc(r.tip) + '</div>' : '') +
+    (rawText ? '<details style="margin:10px 0"><summary class="mut" style="cursor:pointer">📋 نسخ النص مع طلب شرح إضافي</summary><textarea id="sum" readonly style="min-height:80px;font-size:14px;margin-top:6px">' + esc('صحّح لي النص ده واشرح أخطائي ببساطة:\n' + rawText) + '</textarea><div class="row"><button type="button" class="b" onclick="cp()">انسخ للتصحيح</button><span id="cpm" class="mut"></span></div></details>' : '') +
+    '<div class="row"><button type="button" class="b p" onclick="go(\'chat\')">كمّل في المحادثة</button></div>';
+}
+
+function showFB(el, r, rawText){
+  if(!el) return;
+  var m = (r && r.mistakes) || [];
+  saveTopics(m);
+  el.innerHTML = renderFBHTML(r, rawText);
+}
+
+function analyze(text, task, sel, st, onDone){
+  var prompt = 'You are a friendly English teacher for an Egyptian Arabic speaker at CEFR level ' + lvl() + '. Task given: ' + task + '\nStudent text:\n' + text + '\n\nReturn ONLY JSON: {"score":0-100,"corrected":"full corrected text","mistakes":[{"wrong":"","right":"","why":"short explanation in simple Egyptian Arabic","topic":"grammar topic in English"}],"praise":"one short encouraging sentence in Egyptian Arabic","tip":"one useful new word or grammar point in Egyptian Arabic with an English example"}. Weak topics so far: ' + (top3() || 'unknown');
+  ai(prompt, { mode: 'analyze', text: text }).then(function(r){
+    log('write', Math.round((r && r.score) || 80));
+    if(st && $(st)) $(st).textContent = '';
+    var targetEl = $(sel);
+    showFB(targetEl, r, text);
+    if(onDone) onDone(r);
+    save();
+  });
+}
+
+/* =========================================================================
+   14. قسم التدريب التفاعلي + لعبة تحدي الجمل السريعة (Practice & Mini-Game)
+   ========================================================================= */
+function initWordGame(){
+  var poolSents = BANK[lvl()] || BANK.B1;
+  var s = pick(poolSents);
+  var words = s.replace(/[.!?]+$/, '').split(/\s+/);
+  var shuffled = words.slice().sort(function(){ return Math.random() - 0.5; });
+  if(shuffled.join(' ') === words.join(' ') && shuffled.length > 1){
+    var tmp = shuffled[0]; shuffled[0] = shuffled[1]; shuffled[1] = tmp;
+  }
+  WG = {
+    target: s,
+    targetWords: words,
+    Pool: shuffled,
+    Picked: [],
+    done: false,
+    won: false
+  };
+}
+
+function startP(m){
+  pushNavState();
+  cap();
+  var s = '';
+  if(m === 'game'){
+    initWordGame();
+    s = WG.target;
+  } else if(m !== 'write'){
+    if(SQ.length){
+      s = SQ.shift();
+    } else {
+      var bankList = BANK[lvl()] || BANK.B1;
+      var lastS = P && P.s ? P.s : '';
+      var candidates = bankList.filter(function(x){ return x !== lastS; });
+      s = pick(candidates.length ? candidates : bankList);
+      ai('Write 6 new natural English sentences for an Egyptian learner at CEFR ' + lvl() + ', 8-14 words each, practicing: ' + (top3() || 'mixed grammar') + '. Return ONLY a JSON array of strings.', { mode: 'sentences' })
+        .then(function(a){
+          if(Array.isArray(a)) SQ = a.filter(function(x){ return typeof x === 'string' && x !== s; });
+        });
+    }
+  }
+  P = { m: m, s: s, tx: '', done: false, fbData: null };
+  HP.push(P);
+  if(HP.length > 30) HP.shift();
+  HI = HP.length - 1;
+  render();
+  save();
+}
+
+function more(){
+  return '<div class="row"><button type="button" class="b p" onclick="startP(P.m)">جملة تانية</button></div>';
+}
+
+function rPractice(){
+  var curLvl = lvl();
+  var lvlDesc = {
+    A2: 'جمل يومية بسيطة، مضارع وماضي بسيط، ومواقف الحياة الأساسية.',
+    B1: 'مواقف العمل، المضارع التام، الحالات الشرطية الأولى، والربط بين الجمل.',
+    B2: 'التعبير الدقيق، الحالات الشرطية المتقدمة، المبني للمجهول، ومناقشة الأفكار.',
+    C1: 'الطلاقة المهنية والإعلامية، الإقلاب البلاغي (Inversion)، والمصطلحات الدقيقة.'
+  };
+
+  if(!P){
+    app.innerHTML =
+      '<div class="card">' +
+        '<div class="stat" style="border:0;padding:0 0 6px">' +
+          '<h2>🎯 تدريبات مستوى <span class="en">' + esc(curLvl) + '</span></h2>' +
+          '<span class="badge ok">متكيّف مع مستواك</span>' +
+        '</div>' +
+        '<p class="mut" style="margin-top:0">' + esc(lvlDesc[curLvl] || '') + '</p>' +
+        '<div class="row"><button type="button" class="b p" style="width:100%;text-align:right" onclick="startP(\'dict\')">🎧 إملاء: اسمع واكتب</button></div>' +
+        '<div class="row"><button type="button" class="b p" style="width:100%;text-align:right" onclick="startP(\'speak\')">🎤 نطق: كرّر الجملة</button></div>' +
+        '<div class="row"><button type="button" class="b p" style="width:100%;text-align:right" onclick="startP(\'write\')">✍️ كتابة: موضوع قصير</button></div>' +
+        '<div class="row"><button type="button" class="b ok-btn" style="width:100%;text-align:right" onclick="startP(\'game\')">🎮 لعبة تحدي ترتيب الجمل السريع (+20 XP)</button></div>' +
+      '</div>';
+    return;
+  }
+
+  var m = P.m;
+  if(m === 'game'){
+    if(!WG.target) initWordGame();
+    app.innerHTML =
+      '<div class="card">' +
+        '<div class="stat" style="border:0;padding:0">' +
+          '<h2>🎮 تحدي تكوين الجملة (' + esc(curLvl) + ')</h2>' +
+          '<button type="button" class="b" onclick="say(WG.target,.9)">🔊 اسمع الجملة كمساعدة</button>' +
+        '</div>' +
+        '<p class="mut">اضغط على الكلمات بالترتيب الصحيح لتكوين جملة إنجليزية سليمة:</p>' +
+        '<div class="mut" style="font-size:13px">الجملة اللي كوّنتها (اضغط على أي كلمة لإرجاعها):</div>' +
+        '<div class="word-bank en" id="pickedBank">' +
+          (WG.Picked.length
+            ? WG.Picked.map(function(w, idx){
+                return '<button type="button" class="word-tile" onclick="unpickWord(' + idx + ')">' + esc(w) + '</button>';
+              }).join('')
+            : '<span class="mut">اضغط على الكلمات بالأسفل لوضعها هنا…</span>') +
+        '</div>' +
+        '<div class="mut" style="font-size:13px">الكلمات المتاحة:</div>' +
+        '<div class="word-bank en" id="poolBank">' +
+          WG.Pool.map(function(w, idx){
+            return '<button type="button" class="word-tile" onclick="pickWord(' + idx + ')">' + esc(w) + '</button>';
+          }).join('') +
+        '</div>' +
+        '<div class="row">' +
+          '<button type="button" class="b p" onclick="checkWordGame()">تحقق من الترتيب</button>' +
+          '<button type="button" class="b" onclick="startP(\'game\')">جملة تانية</button>' +
+          '<button type="button" class="b" onclick="go(\'practice\')">رجوع</button>' +
+        '</div>' +
+        '<div id="fb"></div>' +
+      '</div>';
+    return;
+  }
+
+  if(m === 'write'){
+    var wPrompt = WP[curLvl] || WP.B1;
+    app.innerHTML =
+      '<div class="card">' +
+        '<h2>✍️ كتابة (' + esc(curLvl) + ')</h2>' +
+        '<div class="en big">' + esc(wPrompt) + '</div>' +
+        '<textarea id="tx" placeholder="Write your paragraph here…" oninput="$(\'#wc\').textContent=this.value.trim()?this.value.trim().split(/\\s+/).length:0;scheduleSave()"></textarea>' +
+        '<p class="mut">الكلمات: <span id="wc">0</span></p>' +
+        '<div class="row">' +
+          '<button type="button" class="b p" onclick="doneW()">خلّصت</button>' +
+          '<button type="button" class="b" onclick="startP(\'write\')">موضوع تاني</button>' +
+          '<button type="button" class="b" onclick="go(\'practice\')">رجوع</button>' +
+        '</div>' +
+        '<div id="fb"></div>' +
+      '</div>';
+    return;
+  }
+
+  if(m === 'dict'){
+    app.innerHTML =
+      '<div class="card">' +
+        '<h2>🎧 إملاء (' + esc(curLvl) + ')</h2>' +
+        '<p class="mut">اسمع الجملة واكتبها، وهوضحلك الكلمات الصح والكلمات اللي محتاجة تظبيط.</p>' +
+        '<div class="row">' +
+          '<button type="button" class="b p" onclick="say(P.s,.9)">🔊 اسمع</button>' +
+          '<button type="button" class="b" onclick="say(P.s,.65)">🐢 ببطء</button>' +
+        '</div>' +
+        '<input type="text" id="tx" autocomplete="off" autocapitalize="off" placeholder="اكتب الجملة اللي سمعتها…" onkeydown="if(event.key===\'Enter\')chkD()" oninput="scheduleSave()">' +
+        '<div class="row">' +
+          '<button type="button" class="b p" onclick="chkD()">تحقق</button>' +
+          '<button type="button" class="b" onclick="go(\'practice\')">رجوع</button>' +
+        '</div>' +
+        '<div id="fb"></div>' +
+      '</div>';
+    if(!P.done){
+      setTimeout(function(){ if(P && P.m === 'dict') say(P.s, LEVEL_SPEED[curLvl] || 0.9); }, 200);
+    }
+    return;
+  }
+
+  app.innerHTML =
+    '<div class="card">' +
+      '<h2>🎤 نطق (' + esc(curLvl) + ')</h2>' +
+      '<div class="en big">' + esc(P.s) + '</div>' +
+      '<div class="row">' +
+        '<button type="button" class="b" onclick="say(P.s,.9)">🔊 اسمعها</button>' +
+        '<button type="button" class="b" onclick="say(P.s,.65)">🐢 ببطء</button>' +
+        '<button type="button" class="b p" onclick="micP()">🎤 اتكلم</button>' +
+        '<button type="button" class="b" onclick="go(\'practice\')">رجوع</button>' +
+      '</div>' +
+      '<div id="fb"></div>' +
+    '</div>';
+}
+
+function pickWord(idx){
+  var w = WG.Pool.splice(idx, 1)[0];
+  if(w !== undefined) WG.Picked.push(w);
+  rPractice();
+  pExtra();
+  if(WG.Pool.length === 0) checkWordGame();
+}
+
+function unpickWord(idx){
+  var w = WG.Picked.splice(idx, 1)[0];
+  if(w !== undefined) WG.Pool.push(w);
+  rPractice();
+  pExtra();
+}
+
+function checkWordGame(){
+  var userJoined = WG.Picked.join(' ').toLowerCase();
+  var targetJoined = (WG.targetWords || []).join(' ').toLowerCase();
+  var fb = $('#fb');
+  if(!fb) return;
+  if(userJoined === targetJoined){
+    if(P && !P.done){
+      P.done = true;
+      P.sc = 100;
+      log('dict', 100);
+      awardXP(20, 'word_master');
+    }
+    say(WG.target, 0.92);
+    fb.innerHTML = '<div class="fb ok">🎉 برافو! ترتيب الجملة صحيح ١٠٠٪ (+20 XP):<div class="en" style="margin-top:6px;font-weight:700">' + esc(WG.target) + '</div></div>' + more();
+  } else {
+    playTone('bad');
+    fb.innerHTML = '<div class="fb bad">الترتيب محتاج تعديل بسيط! اضغط على أي كلمة فوق لإرجاعها أو اضغط (🔊 اسمع الجملة كمساعدة).</div>';
+  }
+  save();
+}
+
+function chkD(){
+  if(!P) return;
+  var txEl = $('#tx');
+  var val = txEl ? txEl.value.trim() : '';
+  if(!val){
+    $('#fb').innerHTML = '<div class="fb warn">اكتب الجملة اللي سمعتها الأول قبل الضغط على تحقق.</div>';
+    return;
+  }
+  var sc = sim(val, P.s);
+  if(!P.done){
+    log('dict', sc);
+    P.done = true;
+    awardXP(sc >= 80 ? 15 : 6);
+  }
+  P.tx = val;
+  P.sc = sc;
+  $('#fb').innerHTML =
+    '<div class="fb ' + (sc >= 80 ? 'ok' : 'bad') + '">' +
+      '<div>التطابق: <b>' + sc + '%</b></div>' +
+      '<div class="en" style="margin-top:6px">' + diffTargetHTML(val, P.s) + '</div>' +
+    '</div>' + more();
+  save();
+}
+
+function micP(){
+  if(!P) return;
+  $('#fb').innerHTML = '<p class="mut">🎤 بسمعك… اقرا الجملة بصوت عالي وواضح</p>';
+  listen(function(t){
+    var sc = sim(t, P.s);
+    if(!P.done){
+      log('speak', sc);
+      P.done = true;
+      awardXP(sc >= 75 ? 15 : 6);
+    }
+    P.said = t;
+    P.sc = sc;
+    $('#fb').innerHTML =
+      '<div class="fb ' + (sc >= 75 ? 'ok' : 'bad') + '">' +
+        '<div>تطابق النطق: <b>' + sc + '%</b></div>' +
+        '<div class="en" style="margin-top:4px">سمعتك بتقول: "' + esc(t) + '"</div>' +
+        '<div class="en" style="margin-top:6px">' + diffTargetHTML(t, P.s) + '</div>' +
+      '</div>' + more();
+    save();
+  }, function(){
+    $('#fb').innerHTML = '<p class="mut">الميكروفون مش متاح هنا. جرّب Chrome أو Safari وتأكد من السماح للميكروفون.</p>' + more();
+  });
+}
+
+function doneW(){
+  var txEl = $('#tx');
+  var t = txEl ? txEl.value.trim() : '';
+  if(t.split(/\s+/).filter(Boolean).length < 4){
+    $('#fb').innerHTML = '<div class="fb bad">اكتب 4 كلمات على الأقل عشان أقدر أحلّل نصك بشكل مفيد.</div>';
+    return;
+  }
+  if(P) P.tx = t;
+  $('#fb').innerHTML = '<p class="mut">بصحّح نصك وبجهّز الملاحظات…</p>';
+  analyze(t, WP[lvl()], '#fb', null, function(r){
+    if(P){
+      if(!P.done) awardXP(20);
+      P.done = true;
+      P.fbData = r;
+    }
+  });
+}
+
+function stepP(d){
+  cap();
+  var nextIdx = HI + d;
+  if(nextIdx < 0 || nextIdx >= HP.length) return;
+  HI = nextIdx;
+  P = HP[HI];
+  render();
+  save();
+}
+
+function reopen(i){
+  pushNavState();
+  cap();
+  if(i < 0 || i >= HP.length) return;
+  HI = i;
+  P = HP[i];
+  render();
+  save();
+}
+
+function pExtra(){
+  var c = document.createElement('div');
+  if(P){
+    var tx = $('#tx'), f = $('#fb');
+    if(tx && P.tx){
+      tx.value = P.tx;
+      if($('#wc')) $('#wc').textContent = P.tx.trim() ? P.tx.trim().split(/\s+/).length : 0;
+    }
+    if(f && P.done){
+      if(P.m === 'write' && P.fbData){
+        f.innerHTML = renderFBHTML(P.fbData, P.tx);
+      } else if(P.m === 'dict' && typeof P.sc === 'number'){
+        f.innerHTML = '<div class="fb ' + (P.sc >= 80 ? 'ok' : 'bad') + '"><div>التطابق: <b>' + P.sc + '%</b></div><div class="en" style="margin-top:6px">' + diffTargetHTML(P.tx || '', P.s) + '</div></div>' + more();
+      } else if(P.m === 'speak' && typeof P.sc === 'number'){
+        f.innerHTML = '<div class="fb ' + (P.sc >= 75 ? 'ok' : 'bad') + '"><div>تطابق النطق: <b>' + P.sc + '%</b></div><div class="en" style="margin-top:6px">' + diffTargetHTML(P.said || '', P.s) + '</div></div>' + more();
+      }
+    }
+    c.innerHTML =
+      '<div class="step-nav">' +
+        '<button type="button" class="b" onclick="stepP(-1)" ' + (HI > 0 ? '' : 'disabled') + '>⬅ السابق</button>' +
+        '<span class="mut" style="font-size:14px">تمرين ' + (HI + 1) + ' من ' + HP.length + '</span>' +
+        '<button type="button" class="b" onclick="stepP(1)" ' + (HI < HP.length - 1 ? '' : 'disabled') + '>التالي ➡</button>' +
+      '</div>';
+  } else if(HP.length){
+    var ic = { dict: '🎧', speak: '🎤', write: '✍️', game: '🎮' }, h = '';
+    for(var i = HP.length - 1; i >= Math.max(0, HP.length - 8); i--){
+      var x = HP[i];
+      h += '<button type="button" class="opt ' + (x.m === 'write' ? 'rtl-opt' : '') + '" onclick="reopen(' + i + ')">' +
+        (ic[x.m] || '📌') + ' ' +
+        (x.m === 'write' ? 'تمرين كتابة (' + (x.tx ? x.tx.split(/\s+/).length + ' كلمة' : 'فارغ') + ')' : esc(x.s)) +
+        (x.done ? ' ✓' : '') +
+      '</button>';
+    }
+    c.innerHTML = '<div class="card"><h2>تدريباتي الأخيرة (اضغط للعودة لأي خطوة)</h2><p class="mut">كل إجاباتك ومحاولاتك محفوظة هنا تلقائياً:</p>' + h + '</div>';
+  }
+  app.appendChild(c);
+}
+
+/* =========================================================================
+   15. قسم تقدّمي والأوسمة وإدارة البيانات (Progress Tab)
+   ========================================================================= */
+function rProg(){
+  var h = store.get('hist', []);
+  var unlocked = store.get('badges', {});
+  var names = {
+    test: 'اختبار المستوى',
+    chat: 'محادثة',
+    dict: 'إملاء وتحدي الجمل',
+    speak: 'نطق ومكالمة فيديو',
+    write: 'كتابة'
+  };
+  var rows = Object.keys(names).map(function(k){
+    var a = h.filter(function(x){ return x.m === k; }).map(function(x){ return x.s; });
+    return '<div class="stat"><span>' + names[k] + '</span><b>' + (a.length ? a.length + ' مرة، متوسط ' + avg(a) + '%' : '—') + '</b></div>';
+  }).join('');
+
+  var t = store.get('topics', {});
+  var k = Object.keys(t).sort(function(a,b){ return t[b] - t[a]; }).slice(0, 6);
+
+  var badgesHTML = BADGES_DEF.map(function(b){
+    var isUn = !!unlocked[b.id];
+    return '<div class="badge-card ' + (isUn ? 'unlocked' : '') + '">' +
+      '<div style="font-size:26px">' + b.icon + '</div>' +
+      '<div style="font-weight:700;font-size:14px">' + esc(b.title) + '</div>' +
+      '<div class="mut" style="font-size:12px">' + esc(b.desc) + '</div>' +
+    '</div>';
+  }).join('');
+
+  app.innerHTML =
+    '<div class="card">' +
+      '<div class="stat" style="border:0;padding-top:0">' +
+        '<h2>🏆 أوسمتي وإنجازاتي</h2>' +
+        '<span class="badge ok">' + Object.keys(unlocked).length + ' / ' + BADGES_DEF.length + ' مفتوح</span>' +
+      '</div>' +
+      '<div class="badges-grid">' + badgesHTML + '</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="stat" style="border:0;padding-top:0">' +
+        '<h2>📈 تقدّمك التفصيلي</h2>' +
+        '<span class="badge">إجمالي الأنشطة: ' + h.length + '</span>' +
+      '</div>' +
+      (h.length ? rows : '<p class="mut">لسه مفيش نشاط. ابدأ بالاختبار أو المحادثة أو أي تدريب.</p>') +
+      '<p class="mut" style="margin-bottom:8px">تقدّمك محفوظ تلقائياً، وتقدر كمان تنقله لأي جهاز تاني من زر (🔗 مشاركة).</p>' +
+      (h.length ? '<div class="row"><button type="button" class="b" onclick="clearProgress()">🗑️ مسح السجل والبدء من جديد</button></div>' : '') +
+    '</div>' +
+    '<div class="card">' +
+      '<h2>🎯 نقاط بتتكرر فيها أخطاءك</h2>' +
+      (k.length
+        ? k.map(function(x){
+            return '<div class="stat"><span class="en">' + esc(x) + '</span><b>' + t[x] + ' مرة</b></div>';
+          }).join('')
+        : '<p class="mut">هتظهر هنا بعد ما تكتب أو تتكلم في المحادثة أو تمارين الكتابة.</p>') +
+    '</div>';
+}
+
+function clearProgress(){
+  store.del('hist');
+  store.del('topics');
+  store.del('result');
+  store.del('xp');
+  store.del('badges');
+  HP = [];
+  HI = -1;
+  P = null;
+  S = null;
+  SNAP = null;
+  save();
+  updateGamificationUI();
+  rProg();
+  showToast('تم مسح سجل التقدّم والبدء من جديد');
+}
+
+/* =========================================================================
+   16. المشاركة وتحميل الأداة المستقلة ونقل التقدم (Share & Export)
+   ========================================================================= */
+function openShareModal(){
+  var m = $('#shareModal');
+  if(!m) return;
+  var xp = store.get('xp', 0);
+  var shareMsg = 'جرّب أداة "مدرّبي الإنجليزي" التفاعلية! فيها تحديد مستوى شامل، محادثة ومكالمة فيديو مع مدرّب ذكي، وتصحيح فوري للقواعد والنطق 🎯\nوصلت لمستوى ' + lvl() + ' وحققت ' + xp + ' XP!';
+  if($('#shareTextOut')) $('#shareTextOut').value = shareMsg;
+  m.classList.add('open');
+}
+
+function closeShareModal(){
+  var m = $('#shareModal');
+  if(m) m.classList.remove('open');
+}
+
+function downloadStandaloneApp(){
+  try {
+    var htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'مدربي-الإنجليزي.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+    showToast('تم تحميل ملف الأداة الكامل بنجاح! يمكنك إرساله لأي صديق ✓');
+  } catch(e){
+    showToast('تعذّر التحميل المباشر في هذا الوضع');
+  }
+}
+
+function shareNativeOrCopy(){
+  var txt = $('#shareTextOut') ? $('#shareTextOut').value : '';
+  if(navigator.share){
+    navigator.share({ title: 'مدرّبي الإنجليزي', text: txt, url: location.href }).catch(function(){});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(function(){
+      showToast('تم نسخ رسالة الدعوة بنجاح! الصقها مع أصدقائك ✓');
+    });
+  } else {
+    var el = $('#shareTextOut');
+    if(el){ el.select(); document.execCommand('copy'); showToast('تم نسخ الدعوة!'); }
+  }
+}
+
+function exportProgressCode(){
+  save();
+  try {
+    var payload = buildFullStatePayload();
+    var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(encoded).then(function(){
+        showToast('تم نسخ كود التقدّم! احتفظ به أو الصقه على جهازك الآخر ✓');
+      });
+    } else {
+      var box = $('#shareTextOut');
+      if(box){ box.value = encoded; box.select(); document.execCommand('copy'); }
+      showToast('تم نسخ كود التقدّم في المربع أعلاه ✓');
+    }
+  } catch(e){
+    showToast('حدث خطأ أثناء تصدير الكود');
+  }
+}
+
+function importProgressCode(){
+  var w = $('#importBoxWrap');
+  if(w) w.style.display = 'block';
+}
+
+function applyImportedCode(){
+  var inp = $('#importCodeInput');
+  if(!inp || !inp.value.trim()) return;
+  try {
+    var decoded = JSON.parse(decodeURIComponent(escape(atob(inp.value.trim()))));
+    restoreFromPayload(decoded);
+    save();
+    render();
+    closeShareModal();
+    showToast('تم استرجاع تقدّمك بالكامل بنجاح! 🎉');
+  } catch(e){
+    showToast('كود التقدّم غير صالح، تأكد من نسخه بالكامل.');
+  }
+}
+
+/* =========================================================================
+   17. المظهر الليلي/النهاري وإعدادات الذكاء الاصطناعي
+   ========================================================================= */
+function applyTheme(){
+  var th = store.get('theme', 'auto');
+  if(th === 'dark' || th === 'light'){
+    document.documentElement.setAttribute('data-theme', th);
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+}
+
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme');
+  var isDark = cur === 'dark' || (!cur && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var next = isDark ? 'light' : 'dark';
+  store.set('theme', next);
+  applyTheme();
+  showToast(next === 'dark' ? 'تم تفعيل الوضع الليلي 🌙' : 'تم تفعيل الوضع النهاري ☀️');
+}
+
+function updateEngineBadge(){
+  var b = $('#engineBadge');
+  if(!b) return;
+  var prov = store.get('api_provider', 'local');
+  var key = store.get('api_key', '');
+  if(window.claude && typeof window.claude.use === 'function'){
+    b.textContent = 'Claude AI ✓';
+  } else if(prov === 'gemini' && key){
+    b.textContent = 'Gemini AI ✓';
+  } else if(prov === 'openai' && key){
+    b.textContent = 'OpenAI ✓';
+  } else {
+    b.textContent = '💾 محفوظ تلقائياً ✓';
+  }
+}
+
+function openSettings(){
+  var m = $('#settingsModal');
+  if(!m) return;
+  $('#apiProvider').value = store.get('api_provider', 'local');
+  $('#apiKeyInput').value = store.get('api_key', '');
+  m.classList.add('open');
+}
+
+function closeSettings(){
+  var m = $('#settingsModal');
+  if(m) m.classList.remove('open');
+}
+
+function saveSettings(){
+  var prov = $('#apiProvider').value;
+  var key = $('#apiKeyInput').value.trim();
+  store.set('api_provider', prov);
+  store.set('api_key', key);
+  updateEngineBadge();
+  closeSettings();
+  showToast('تم حفظ إعدادات المدرّب بنجاح ✓');
+}
+
+/* =========================================================================
+   18. التهيئة الأولية واسترجاع الجلسة من localStorage أو window.pageVault
+   ========================================================================= */
+(function init(){
+  applyTheme();
+  var btnSound = $('#soundBtn');
+  if(btnSound) btnSound.textContent = soundEnabled ? '🔔' : '🔕';
+
+  var s = store.get('state', null);
+  if(s){
+    restoreFromPayload(s);
+  }
+  updateEngineBadge();
+  render();
+
+  /* استرجاع إضافي من جسر Canvas الدائم (window.pageVault) لضمان عدم ضياع التقدم عند إغلاق المعاينة */
+  if(window.pageVault){
+    if(typeof window.pageVault.onRestore === 'function'){
+      window.pageVault.onRestore(function(restored){
+        if(restored){
+          restoreFromPayload(restored);
+          render();
+        }
+      });
+    }
+    Promise.resolve(window.pageVault.ready).then(function(){
+      if(typeof window.pageVault.load === 'function'){
+        return window.pageVault.load('app.state');
+      }
+      return null;
+    }).then(function(vaultState){
+      if(vaultState && typeof vaultState === 'object'){
+        var localHistLen = (store.get('hist', []) || []).length;
+        var vaultHistLen = (vaultState.hist || []).length;
+        if(!s || vaultHistLen >= localHistLen){
+          restoreFromPayload(vaultState);
+          render();
+        }
+      }
+    }).catch(function(){});
+  }
+
+  addEventListener('visibilitychange', save);
+  addEventListener('pagehide', save);
+  addEventListener('beforeunload', save);
+})();
+</script>
+
+</body></html>
